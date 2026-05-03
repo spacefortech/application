@@ -1,57 +1,67 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <div class="top-line" aria-hidden="true"></div>
     <header class="site-header">
-        <div class="nav-inner" aria-label="Navigazione principale">
-            <a class="brand" href="/" aria-label="MyTravelGuide Germany">
-                <span class="brand-spark" aria-hidden="true">m</span>
-                <span class="brand-text">MYTRAVEL<br>GUIDE</span>
+        <div class="nav-inner" aria-label="Hauptnavigation">
+            <a class="menu-trigger" href="#cities" aria-label="Zu den Reisezielen">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <small>Menü</small>
             </a>
-            <nav class="main-nav" aria-label="Sezioni">
-                <a href="#places">Città cool</a>
-                <a href="#cities">Destinazioni</a>
-                <a href="#weekend">Weekend</a>
+            <a class="brand" href="/" aria-label="Mein Reiseführer Deutschland">
+                <span class="brand-spark" aria-hidden="true">m</span>
+                <span class="brand-text">MEINREISE<br>FÜHRER</span>
+            </a>
+            <nav class="main-nav" aria-label="Bereiche">
+                <a href="#places">Coole Städte</a>
+                <a href="#cities">Reiseziele</a>
+                <a href="#weekend">Wochenende</a>
                 <a href="/api/cities">API</a>
             </nav>
-            <form class="mini-search" data-mini-search autocomplete="off">
-                <label class="sr-only" for="mini-city-input">Cerca città</label>
-                <input id="mini-city-input" type="search" placeholder="Cerca...">
-                <button type="submit" aria-label="Cerca">
-                    <span aria-hidden="true">&#9906;</span>
-                </button>
-            </form>
+            <div class="nav-actions" aria-label="Schnellzugriff">
+                <a class="nav-action is-filled" href="#places">Inspiration</a>
+                <a class="nav-action is-outline" href="#cities">Reiseziele</a>
+            </div>
         </div>
     </header>
 
     <main>
         <section class="hero" aria-labelledby="hero-title">
             <div class="hero-card">
-                <div class="orange-route route-one" aria-hidden="true"></div>
-                <div class="orange-route route-two" aria-hidden="true"></div>
                 <div class="hero-shade" aria-hidden="true"></div>
                 <div class="hero-content">
-                    <h1 id="hero-title">Dove vuoi andare?</h1>
-                    <form class="search-panel" data-city-search autocomplete="off" style="margin-bottom: 30px">
+                    <h1 id="hero-title">Welche Stadt möchtest du besuchen?</h1>
+                    <form class="search-panel" data-city-search autocomplete="off">
                         <div class="search-fields">
+                            <span class="country-mark" aria-hidden="true">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </span>
                             <label>
-                                <input id="city-input" name="city" list="city-options" type="search" placeholder="Es. Berlino" data-city-input>
+                                <span class="sr-only">Stadt suchen</span>
+                                <input id="city-input" name="city" type="text" placeholder="z. B. Berlin" autocomplete="off" spellcheck="false" data-city-input role="combobox" aria-autocomplete="list" aria-controls="city-options" aria-expanded="false">
                             </label>
-                            <datalist id="city-options"></datalist>
-                            <button type="submit">Scoprire</button>
+                            <span class="search-divider" aria-hidden="true"></span>
+                            <button type="submit">
+                                Suchen
+                            </button>
                         </div>
+                        <div class="city-options" id="city-options" data-city-options role="listbox" aria-label="Städte"></div>
                     </form>
+                    <p>Finde Orte, Viertel und Routen in den schönsten Städten Deutschlands.</p>
+
                 </div>
             </div>
         </section>
 
-        <section class="feed-shell" style="margin-top: 10px">
-            <section class="city-strip" id="cities" aria-label="Città principali" data-city-strip></section>
+        <section class="feed-shell">
+            <section class="city-strip" id="cities" aria-label="Wichtigste Städte" data-city-strip></section>
 
             <section class="results-shell" id="places" aria-live="polite">
                 <div class="section-heading">
-                    <h2 data-results-heading>Nuovi luoghi</h2>
-                    <p data-results-copy>Scopri una selezione curata di posti da visitare, mangiare e vivere in città.</p>
+                    <h2 data-results-heading>Neue Orte</h2>
+                    <p data-results-copy>Entdecke eine kuratierte Auswahl an Orten zum Besuchen, Essen und Erleben.</p>
                 </div>
                 <div data-city-result></div>
             </section>
@@ -59,8 +69,8 @@
     </main>
 
     <footer class="site-footer" id="weekend">
-        <span>MyTravelGuide Germany</span>
-        <span>Primo prototipo con dati curati per le principali città tedesche.</span>
+        <span>Mein Reiseführer Deutschland</span>
+        <span>Erster Prototyp mit kuratierten Daten zu den wichtigsten deutschen Städten.</span>
     </footer>
 
     <script>window.CITY_GUIDE_DATA = {{ citiesJson|raw }};</script>
