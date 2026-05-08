@@ -239,12 +239,12 @@
 
     function renderDestinationGrid(activeCity, notice) {
         var activeSlug = activeCity ? activeCity.slug : '';
-        var destinationCards = cities.slice(0, 16).map(function (city, index) {
+        var destinationCards = cities.slice(0, 20).map(function (city, index) {
             return renderDestinationCard(city, index, activeSlug);
         }).join('');
 
         heading.textContent = notice ? 'Stadt nicht gefunden' : 'Städte für deine nächste Reise';
-        copy.textContent = notice || 'Sechzehn kuratierte City-Trips in Deutschland, mit starken Motiven, klaren Reisethemen und genug Inspiration für dein nächstes Wochenende.';
+        copy.textContent = notice || 'Zwanzig kuratierte City-Trips in Deutschland, mit starken Motiven, klaren Reisethemen und genug Inspiration für dein nächstes Wochenende.';
         activateCity(activeSlug);
         result.innerHTML = (notice ? '<div class="empty-state"><strong>Keine passende Stadt gefunden.</strong><p>Wähle eine der kuratierten Städte unten oder suche nach einer anderen Schreibweise.</p></div>' : '') +
             '<div class="destinations-grid">' + destinationCards + '</div>';
@@ -277,7 +277,7 @@
             if (miniInput) {
                 miniInput.value = value;
             }
-            renderDestinationGrid(null, 'Versuche Berlin, Hamburg, München, Köln, Frankfurt, Dresden, Leipzig, Stuttgart, Nürnberg, Heidelberg, Bremen, Düsseldorf, Duisburg, Bonn, Münster oder Rostock.');
+            renderDestinationGrid(null, 'Versuche Berlin, Hamburg, München, Köln, Frankfurt, Dresden, Leipzig, Stuttgart, Nürnberg, Heidelberg, Bremen, Düsseldorf, Duisburg, Bonn, Münster, Rostock, Aachen, Trier, Lübeck oder Freiburg.');
         }
 
         if (scroll) {
