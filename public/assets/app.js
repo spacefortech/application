@@ -196,13 +196,15 @@
         var href = city.slug === 'duisburg' ? '/cool-places?city=duisburg' : '?city=' + encodeURIComponent(city.slug);
 
         return '<a class="destination-card' + (isActive ? ' is-active' : '') + '" href="' + href + '" data-destination-card data-city-slug="' + escapeHtml(city.slug) + '" aria-label="City Guide ' + escapeHtml(city.displayName) + ' ansehen" style="--sprite-x: ' + position.x + '%; --sprite-y: ' + position.y + '%; --city-accent: ' + escapeHtml(city.accent || '#ff7a1a') + ';">' +
-            '<span class="destination-photo" aria-hidden="true"></span>' +
-            '<span class="destination-shade" aria-hidden="true"></span>' +
-            '<span class="destination-content">' +
+            '<span class="destination-media">' +
+                '<span class="destination-photo" aria-hidden="true"></span>' +
+                '<span class="destination-shade" aria-hidden="true"></span>' +
                 '<span class="destination-top">' +
                     '<span class="destination-kicker">' + escapeHtml(city.region) + '</span>' +
                     '<span class="destination-duration">' + escapeHtml(city.duration) + '</span>' +
                 '</span>' +
+            '</span>' +
+            '<span class="destination-content">' +
                 '<span class="destination-copy">' +
                     '<span class="destination-neighborhoods">' + escapeHtml(neighborhoods) + '</span>' +
                     '<strong>' + escapeHtml(city.displayName) + '</strong>' +
