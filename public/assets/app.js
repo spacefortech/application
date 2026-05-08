@@ -706,7 +706,11 @@
                 activePlaceSlug = button.getAttribute('data-place-card');
                 activePhotoIndex = 0;
                 render();
-                carousel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                
+                var mainContent = document.querySelector('.place-main-content');
+                if (mainContent) {
+                    mainContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
             });
         });
     }
@@ -763,13 +767,14 @@
                     '<span class="section-kicker">' + escapeHtml(place.type) + '</span>' +
                     '<h2 id="place-info-title">' + escapeHtml(place.name) + '</h2>' +
                     '<p>' + escapeHtml(place.intro) + '</p>' +
-                    '<p>' + escapeHtml(place.why) + '</p>' +
-                    '<div class="place-tip"><strong>Tipp</strong><span>' + escapeHtml(place.tip) + '</span></div>' +
+                    (place.why ? '<p>' + escapeHtml(place.why) + '</p>' : '') +
+                    (place.tip ? '<div class="place-tip"><strong>Tipp</strong><span>' + escapeHtml(place.tip) + '</span></div>' : '') +
                 '</div>' +
                 '<dl class="place-facts">' +
                     (place.facts || []).map(function (fact) {
                         return '<div><dt>' + escapeHtml(fact.label) + '</dt><dd>' + escapeHtml(fact.value) + '</dd></div>';
                     }).join('') +
+                    (place.area ? '<div><dt>Stadtteil</dt><dd>' + escapeHtml(place.area) + '</dd></div>' : '') +
                     '<div><dt>Adresse</dt><dd>' + escapeHtml(place.address) + '</dd></div>' +
                     '<div><dt>Beste Zeit</dt><dd>' + escapeHtml(place.bestTime) + '</dd></div>' +
                 '</dl>' +
@@ -787,32 +792,34 @@
                     '<div class="place-feedback-list">' +
                         items.map(function (item) {
                             return '<article class="place-feedback-card">' +
+                                '<div class="feedback-quote-icon">“</div>' +
                                 '<p>' + escapeHtml(item.quote) + '</p>' +
-                                '<strong>' + escapeHtml(item.name) + '</strong>' +
+                                '<div class="feedback-meta">' +
+                                    '<strong>' + escapeHtml(item.name) + '</strong>' +
+                                    '<span class="feedback-date">Entdecker</span>' +
+                                '</div>' +
                             '</article>';
                         }).join('') +
                     '</div>' +
                 '</div>' +
                 '<form class="place-feedback-form" data-place-feedback-form autocomplete="off">' +
-                    '<label><span>Name</span><input name="name" type="text" maxlength="40" required></label>' +
-                    '<label><span>Kommentar</span><textarea name="quote" rows="5" maxlength="280" required></textarea></label>' +
+                    '<label><span>Dein Kommentar</span><textarea name="quote" rows="5" placeholder="Was denkst du über diesen Ort?" maxlength="280" required></textarea></label>' +
                     '<button type="submit">Feedback senden</button>' +
                 '</form>' +
             '</section>';
 
         feedback.querySelector('[data-place-feedback-form]').addEventListener('submit', function (event) {
             var form = event.currentTarget;
-            var name = form.elements.name.value.trim();
             var quote = form.elements.quote.value.trim();
             var stored = readStoredFeedbacks(place);
 
             event.preventDefault();
 
-            if (!name || !quote) {
+            if (!quote) {
                 return;
             }
 
-            stored.unshift({ name: name, quote: quote });
+            stored.unshift({ name: 'Entdecker', quote: quote });
             writeStoredFeedbacks(place, stored.slice(0, 8));
             form.reset();
             renderFeedback(place);

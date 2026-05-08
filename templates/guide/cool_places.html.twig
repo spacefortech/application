@@ -32,18 +32,37 @@
         </header>
 
         <main>
-            <section class="place-detail-shell" id="place-cards" aria-labelledby="place-cards-title">
-                <div class="place-detail-heading">
-                    <h1 id="place-cards-title" style="margin-top: 50px">Duisburg entdecken.</h1>
-                    <p>Wähle einen Ort aus, blättere durch die Fotos, lies die wichtigsten Infos und hinterlasse dein Feedback.</p>
+            <section class="place-detail-hero" aria-labelledby="place-hero-title">
+                <div class="place-detail-hero-content">
+                    <div class="hero-label">
+                        <span class="hero-kicker">City Guide</span>
+                        <span class="hero-divider"></span>
+                        <span class="hero-city">Duisburg</span>
+                    </div>
+                    <h1 id="place-hero-title">Entdecke die verborgenen <br>Seiten der Stadt.</h1>
+                </div>
+            </section>
+
+            <div class="place-detail-container">
+                <section class="place-selection">
+                    <div class="selection-header">
+                        <h2>Must-see Orte</h2>
+                        <p>Wähle einen Ort aus, um Details zu sehen</p>
+                    </div>
+                    <div class="place-card-rail" data-place-cards></div>
+                </section>
+
+                <div class="place-main-content">
+                    <div class="content-left">
+                        <div id="place-gallery" class="place-gallery-section" data-place-carousel></div>
+                    </div>
+                    <div class="content-right">
+                        <div class="place-info-section" data-place-info></div>
+                    </div>
                 </div>
 
-                <div class="place-card-rail" data-place-cards aria-label="Coole Orte in Duisburg"></div>
-
-                <div id="place-gallery" data-place-carousel></div>
-                <div data-place-info></div>
-                <div id="place-feedback" data-place-feedback></div>
-            </section>
+                <section id="place-feedback" class="place-feedback-section" data-place-feedback></section>
+            </div>
         </main>
 
         <footer class="site-footer">
