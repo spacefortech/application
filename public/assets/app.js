@@ -183,7 +183,11 @@
 
                     setSearchCity(city);
                     renderCity(city);
-                    document.getElementById('places').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    
+                    var targetCard = result.querySelector('[data-destination-card][data-city-slug="' + city.slug + '"]');
+                    if (targetCard) {
+                        targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
                 }
             });
         });
@@ -281,7 +285,12 @@
         }
 
         if (scroll) {
-            document.getElementById('places').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            var targetCard = city ? result.querySelector('[data-destination-card][data-city-slug="' + city.slug + '"]') : null;
+            if (targetCard) {
+                targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } else {
+                document.getElementById('places').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
         }
     }
 

@@ -860,13 +860,20 @@ h1 {
 .destination-action {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     align-self: flex-start;
-    min-height: 22px;
-    padding: 0;
-    color: var(--navy);
-    background: transparent;
-    font-size: 0.82rem;
+    min-height: 38px;
+    padding: 0 20px;
+    border-radius: 999px;
+    background: var(--city-accent);
+    color: #fff;
+    font-size: 0.86rem;
     font-weight: 900;
+    transition: filter 180ms ease;
+}
+
+.destination-action:hover {
+    filter: brightness(1.1);
 }
 
 .destination-card:hover,
