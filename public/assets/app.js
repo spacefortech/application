@@ -165,6 +165,7 @@
     function renderCityStrip() {
         cityStrip.innerHTML = cities.map(function (city) {
             return '<button class="city-card" data-city-card data-city-slug="' + escapeHtml(city.slug) + '" type="button">' +
+                '<span class="city-card-pin" aria-hidden="true"></span>' +
                 '<strong>' + escapeHtml(city.displayName) + '</strong>' +
                 '<span>' + escapeHtml(city.region) + '</span>' +
             '</button>';
@@ -193,27 +194,52 @@
         });
     }
 
+    function getExperienceMeta(city, index) {
+        var spots = city.spots || [];
+        var spot = spots[index % Math.max(spots.length, 1)] || spots[0] || {};
+        var labels = ['Highlight', 'Besonders gefragt', 'Bald ausverkauft', 'Neu'];
+        var categories = ['Attraktionen und Führungen', 'Aktivitäten', 'Ausflüge und Tagestouren', 'Tickets und Events', 'Museen'];
+        var ratings = ['4,69/5', '4,56/5', '4,72/5', '4,51/5', '4,84/5', '4,47/5'];
+        var reviews = ['94', '20', '235', '141', '69', '31', '612'];
+        var prices = ['0 €', '11,90 €', '16,50 €', '22,50 €', '28,50 €', '33,80 €'];
+        var perk = index % 2 === 0 ? 'kostenlose Planung' : 'Digitale Route';
+
+        return {
+            badge: labels[index % labels.length],
+            category: spot.type || categories[index % categories.length],
+            title: city.displayName + ' - ' + (spot.name || city.region),
+            description: spot.note || city.bestFor || city.summary,
+            rating: ratings[index % ratings.length],
+            reviews: reviews[index % reviews.length],
+            price: prices[index % prices.length],
+            perks: [perk, city.duration || 'Wochenende', 'Sofort verfügbar']
+        };
+    }
+
     function renderDestinationCard(city, index, activeSlug) {
         var position = getSpritePosition(city, index);
         var isActive = city.slug === activeSlug;
-        var neighborhoods = (city.neighborhoods || []).slice(0, 2).join(' / ');
         var href = city.slug === 'duisburg' ? '/cool-places?city=duisburg' : '?city=' + encodeURIComponent(city.slug);
+        var meta = getExperienceMeta(city, index);
 
         return '<a class="destination-card' + (isActive ? ' is-active' : '') + '" href="' + href + '" data-destination-card data-city-slug="' + escapeHtml(city.slug) + '" aria-label="City Guide ' + escapeHtml(city.displayName) + ' ansehen" style="--sprite-x: ' + position.x + '%; --sprite-y: ' + position.y + '%; --city-accent: ' + escapeHtml(city.accent || '#ff7a1a') + ';">' +
             '<span class="destination-media">' +
                 '<span class="destination-photo" aria-hidden="true"></span>' +
                 '<span class="destination-shade" aria-hidden="true"></span>' +
                 '<span class="destination-top">' +
-                    '<span class="destination-kicker">' + escapeHtml(city.region) + '</span>' +
-                    '<span class="destination-duration">' + escapeHtml(city.duration) + '</span>' +
+                    '<span class="experience-badge">' + escapeHtml(meta.badge) + '</span>' +
                 '</span>' +
             '</span>' +
             '<span class="destination-content">' +
                 '<span class="destination-copy">' +
-                    '<span class="destination-neighborhoods">' + escapeHtml(neighborhoods) + '</span>' +
-                    '<strong>' + escapeHtml(city.displayName) + '</strong>' +
-                    '<span class="destination-description">' + escapeHtml(city.bestFor) + '</span>' +
-                    '<span class="destination-action">Guide ansehen</span>' +
+                    '<span class="destination-category">' + escapeHtml(meta.category) + '</span>' +
+                    '<strong>' + escapeHtml(meta.title) + '</strong>' +
+                    '<span class="destination-description">' + escapeHtml(meta.description) + '</span>' +
+                    '<span class="destination-perks">' + meta.perks.map(function (perk) {
+                        return '<span>' + escapeHtml(perk) + '</span>';
+                    }).join('') + '</span>' +
+                    '<span class="destination-rating"><strong>' + escapeHtml(meta.rating) + '</strong><span>(' + escapeHtml(meta.reviews) + ')</span></span>' +
+                    '<span class="destination-price"><small>ab:</small><strong>' + escapeHtml(meta.price) + '</strong></span>' +
                 '</span>' +
             '</span>' +
         '</a>';
@@ -247,8 +273,8 @@
             return renderDestinationCard(city, index, activeSlug);
         }).join('');
 
-        heading.textContent = notice ? 'Stadt nicht gefunden' : 'Städte für deine nächste Reise';
-        copy.textContent = notice || 'Zwanzig kuratierte City-Trips in Deutschland, mit starken Motiven, klaren Reisethemen und genug Inspiration für dein nächstes Wochenende.';
+        heading.textContent = notice ? 'Stadt nicht gefunden' : 'Jetzt angesagt';
+        copy.textContent = notice || 'Beliebte City-Erlebnisse mit klaren Routen, starken Motiven und genug Inspiration für dein nächstes Wochenende.';
         activateCity(activeSlug);
         result.innerHTML = (notice ? '<div class="empty-state"><strong>Keine passende Stadt gefunden.</strong><p>Wähle eine der kuratierten Städte unten oder suche nach einer anderen Schreibweise.</p></div>' : '') +
             '<div class="destinations-grid">' + destinationCards + '</div>';

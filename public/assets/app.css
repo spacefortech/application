@@ -2508,3 +2508,737 @@ h1 {
         font-size: 1.8rem;
     }
 }
+
+/* Marketplace-inspired homepage */
+
+.home-page {
+    min-height: 100vh;
+    background: #f6f8fb;
+}
+
+.home-page h1,
+.home-page h2,
+.home-page h3,
+.home-page p {
+    overflow-wrap: normal;
+}
+
+.home-page .site-header {
+    background:
+        linear-gradient(180deg, rgba(5, 8, 49, 0.72), rgba(5, 8, 49, 0.18) 78%, rgba(5, 8, 49, 0));
+}
+
+.home-page .nav-inner {
+    width: min(1240px, calc(100% - 48px));
+    min-height: 78px;
+    gap: 18px;
+}
+
+.home-page .menu-trigger {
+    flex: 0 0 auto;
+}
+
+.home-page .brand {
+    margin-right: 10px;
+}
+
+.home-page .main-nav {
+    gap: 4px;
+}
+
+.home-page .main-nav a {
+    padding: 10px 12px;
+    font-size: 0.86rem;
+}
+
+.home-page .nav-action {
+    min-height: 40px;
+    padding: 0 18px;
+}
+
+.home-page .home-hero {
+    min-height: 670px;
+    padding: 118px 16px 112px;
+    background:
+        linear-gradient(180deg, rgba(4, 8, 29, 0.18), rgba(4, 8, 29, 0.6)),
+        linear-gradient(90deg, rgba(4, 8, 29, 0.62), rgba(4, 8, 29, 0.22) 48%, rgba(255, 122, 26, 0.2)),
+        url("/assets/header-sea-hero.png") center 44% / cover no-repeat;
+}
+
+.home-page .home-hero:after {
+    height: 120px;
+    background: linear-gradient(180deg, rgba(246, 248, 251, 0), #f6f8fb 82%);
+}
+
+.home-page .hero-content {
+    width: min(980px, 100%);
+    text-align: center;
+}
+
+.home-page .hero-kicker {
+    min-height: 34px;
+    margin-bottom: 18px;
+    border-color: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.16);
+    color: #fff;
+    letter-spacing: 0;
+}
+
+.home-page #hero-title {
+    max-width: 980px;
+    font-size: 5.1rem;
+    line-height: 0.96;
+    text-transform: uppercase;
+}
+
+.home-page .hero-content p {
+    max-width: 760px;
+    margin-top: 18px;
+    font-size: 1.22rem;
+}
+
+.home-search-panel {
+    width: min(900px, 100%);
+    margin-top: 42px;
+    padding: 17px 20px 20px;
+    border-radius: 8px;
+    box-shadow: 0 22px 52px rgba(0, 0, 0, 0.26);
+}
+
+.search-panel-title {
+    margin: 0 0 12px;
+    color: var(--navy);
+    font-size: 1.08rem;
+    font-weight: 900;
+    text-align: left;
+}
+
+.home-search-panel .search-fields {
+    grid-template-columns: auto minmax(0, 1fr) 1px auto auto;
+    gap: 16px;
+}
+
+.home-search-panel .search-mode {
+    color: var(--muted);
+    font-size: 0.86rem;
+    font-weight: 900;
+}
+
+.home-search-panel .search-fields button {
+    min-width: 148px;
+    color: var(--navy);
+}
+
+.home-assurance {
+    position: relative;
+    z-index: 3;
+    margin-top: -42px;
+    padding: 0 16px 36px;
+}
+
+.assurance-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    width: min(1180px, 100%);
+    margin: 0 auto;
+}
+
+.assurance-card {
+    display: flex;
+    gap: 18px;
+    align-items: flex-start;
+    min-height: 128px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 24px;
+    background: #fff;
+    box-shadow: 0 18px 42px rgba(7, 8, 62, 0.08);
+}
+
+.assurance-card h2 {
+    margin: 0;
+    color: var(--navy);
+    font-size: 1.2rem;
+    line-height: 1.18;
+}
+
+.assurance-card p {
+    margin: 7px 0 0;
+    color: var(--muted);
+    font-size: 0.94rem;
+    font-weight: 700;
+}
+
+.assurance-icon {
+    position: relative;
+    display: grid;
+    flex: 0 0 auto;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #eef6f7;
+}
+
+.assurance-icon:before,
+.assurance-icon:after {
+    content: "";
+    position: absolute;
+}
+
+.assurance-icon.is-cancel:before {
+    width: 22px;
+    height: 22px;
+    border: 3px solid var(--blue);
+    border-radius: 50%;
+}
+
+.assurance-icon.is-cancel:after {
+    width: 17px;
+    height: 8px;
+    border-left: 3px solid var(--blue);
+    border-bottom: 3px solid var(--blue);
+    transform: rotate(-45deg) translate(1px, -1px);
+}
+
+.assurance-icon.is-safe:before {
+    top: 12px;
+    width: 22px;
+    height: 26px;
+    border: 3px solid #10a66a;
+    border-radius: 12px 12px 10px 10px;
+}
+
+.assurance-icon.is-safe:after {
+    top: 20px;
+    width: 11px;
+    height: 6px;
+    border-left: 3px solid #10a66a;
+    border-bottom: 3px solid #10a66a;
+    transform: rotate(-45deg);
+}
+
+.green-feature {
+    display: grid;
+    grid-template-columns: minmax(280px, 0.72fr) minmax(0, 1fr);
+    gap: 34px;
+    align-items: center;
+    padding: 46px max(16px, calc((100vw - 1180px) / 2));
+    background: #0f4f46;
+    color: #fff;
+}
+
+.green-feature-media {
+    min-height: 300px;
+    border-radius: 8px;
+    background:
+        linear-gradient(180deg, rgba(15, 79, 70, 0.04), rgba(15, 79, 70, 0.38)),
+        url("/assets/header-city-street.png") center / cover no-repeat;
+    box-shadow: 0 22px 46px rgba(0, 0, 0, 0.2);
+}
+
+.green-feature-copy span {
+    display: inline-flex;
+    align-items: center;
+    min-height: 30px;
+    margin-bottom: 12px;
+    padding: 0 12px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.14);
+    color: #baf4dd;
+    font-size: 0.76rem;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.green-feature-copy h2 {
+    max-width: 760px;
+    margin: 0;
+    font-size: 2.8rem;
+    line-height: 1.02;
+    letter-spacing: 0;
+}
+
+.green-feature-copy p {
+    max-width: 720px;
+    margin: 16px 0 0;
+    color: rgba(255, 255, 255, 0.86);
+    font-size: 1.05rem;
+    font-weight: 700;
+}
+
+.green-feature-copy a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    margin-top: 24px;
+    padding: 0 22px;
+    border-radius: 999px;
+    background: #fff;
+    color: var(--navy);
+    font-size: 0.9rem;
+    font-weight: 900;
+}
+
+.home-page .feed-shell {
+    padding: 46px 16px 74px;
+}
+
+.home-page .city-strip {
+    gap: 8px;
+    margin-bottom: 26px;
+}
+
+.home-page .city-card {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 38px;
+    min-width: 0;
+    padding: 0 14px;
+    background: #fff;
+}
+
+.home-page .city-card span {
+    display: inline-block;
+}
+
+.home-page .city-card > span:last-child {
+    max-width: 180px;
+    overflow: hidden;
+    color: var(--muted);
+    font-size: 0.76rem;
+    font-weight: 800;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.home-page .city-card:hover > span:last-child,
+.home-page .city-card.is-active > span:last-child {
+    color: rgba(255, 255, 255, 0.72);
+}
+
+.city-card-pin {
+    position: relative;
+    width: 13px;
+    height: 13px;
+    flex: 0 0 auto;
+    border: 2px solid currentColor;
+    border-radius: 50% 50% 50% 0;
+    opacity: 0.62;
+    transform: rotate(-45deg);
+}
+
+.city-card-pin:after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: currentColor;
+    transform: translate(-50%, -50%);
+}
+
+.home-page .section-heading {
+    margin-bottom: 30px;
+}
+
+.home-page .section-heading h2 {
+    font-size: 2.15rem;
+}
+
+.home-page .section-heading p {
+    font-size: 0.96rem;
+    font-weight: 700;
+}
+
+.home-page .destinations-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 26px;
+}
+
+.home-page .destination-card {
+    display: flex;
+    min-width: 0;
+    overflow: hidden;
+    flex-direction: column;
+    gap: 0;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 18px 42px rgba(7, 8, 62, 0.08);
+}
+
+.home-page .destination-media {
+    aspect-ratio: 4 / 3;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.home-page .destination-top {
+    inset: 12px;
+}
+
+.experience-badge {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: inline-flex;
+    align-items: center;
+    max-width: 78%;
+    min-height: 28px;
+    overflow: hidden;
+    border-radius: 999px;
+    padding: 0 10px;
+    background: #fff;
+    color: var(--navy);
+    font-size: 0.7rem;
+    font-weight: 900;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.home-page .destination-content {
+    display: grid;
+    flex: 1 1 auto;
+    padding: 16px 16px 18px;
+}
+
+.home-page .destination-copy {
+    display: grid;
+    gap: 10px;
+}
+
+.destination-category {
+    color: var(--muted);
+    font-size: 0.74rem;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.home-page .destination-copy strong {
+    min-height: 52px;
+    font-size: 1.05rem;
+}
+
+.home-page .destination-description {
+    min-height: 58px;
+    -webkit-line-clamp: 3;
+}
+
+.destination-perks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+}
+
+.destination-perks span {
+    display: inline-flex;
+    align-items: center;
+    min-height: 26px;
+    padding: 0 9px;
+    border-radius: 999px;
+    background: #eef6f7;
+    color: var(--muted);
+    font-size: 0.68rem;
+    font-weight: 900;
+}
+
+.destination-rating {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--navy);
+    font-size: 0.82rem;
+}
+
+.home-page .destination-rating strong {
+    min-height: 0;
+    font-size: 0.9rem;
+}
+
+.destination-rating span {
+    color: var(--muted);
+    font-weight: 800;
+}
+
+.destination-price {
+    display: flex;
+    align-items: flex-end;
+    gap: 7px;
+    margin-top: 2px;
+    color: var(--navy);
+}
+
+.destination-price small {
+    color: var(--muted);
+    font-size: 0.74rem;
+    font-weight: 800;
+}
+
+.home-page .destination-price strong {
+    min-height: 0;
+    font-size: 1.22rem;
+    line-height: 1;
+}
+
+.inspiration-section {
+    padding: 70px 16px;
+    background: #fff;
+}
+
+.inspiration-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+    width: min(1180px, 100%);
+    margin: 0 auto;
+}
+
+.inspiration-card {
+    position: relative;
+    display: flex;
+    min-height: 270px;
+    overflow: hidden;
+    flex-direction: column;
+    justify-content: flex-end;
+    border-radius: 8px;
+    padding: 22px;
+    color: #fff;
+    background-position: center;
+    background-size: cover;
+    box-shadow: 0 18px 42px rgba(7, 8, 62, 0.14);
+}
+
+.inspiration-card:before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(5, 8, 49, 0.06), rgba(5, 8, 49, 0.82));
+}
+
+.inspiration-card span,
+.inspiration-card strong {
+    position: relative;
+    z-index: 1;
+}
+
+.inspiration-card span {
+    align-self: flex-start;
+    min-height: 28px;
+    margin-bottom: 12px;
+    border-radius: 999px;
+    padding: 6px 10px;
+    background: #fff;
+    color: var(--navy);
+    font-size: 0.72rem;
+    font-weight: 900;
+}
+
+.inspiration-card strong {
+    max-width: 360px;
+    font-size: 1.28rem;
+    line-height: 1.12;
+    text-shadow: 0 10px 28px rgba(0, 0, 0, 0.36);
+}
+
+.inspiration-card.is-water {
+    background-image: url("/assets/header-sea-hero.png");
+}
+
+.inspiration-card.is-culture {
+    background-image: url("/assets/city-card-sprite-16.png");
+    background-position: 66.6666% 66.6666%;
+    background-size: 400% 400%;
+}
+
+.inspiration-card.is-weekend {
+    background-image: url("/assets/city-discovery-hero.png");
+}
+
+.nearby-section {
+    padding: 66px 16px 82px;
+    background: #f6f8fb;
+}
+
+.nearby-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    width: min(980px, 100%);
+    margin: 0 auto;
+}
+
+.nearby-card {
+    display: grid;
+    gap: 5px;
+    min-height: 116px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 20px;
+    background: #fff;
+    box-shadow: 0 14px 32px rgba(7, 8, 62, 0.06);
+}
+
+.nearby-card strong {
+    color: var(--navy);
+    font-size: 1.18rem;
+}
+
+.nearby-card span {
+    color: var(--muted);
+    font-size: 0.9rem;
+    font-weight: 800;
+}
+
+@media (max-width: 1020px) {
+    .home-page .nav-inner {
+        width: min(100% - 28px, 1180px);
+    }
+
+    .home-page .destinations-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .green-feature {
+        grid-template-columns: minmax(220px, 0.72fr) minmax(0, 1fr);
+    }
+}
+
+@media (max-width: 720px) {
+    .home-page .nav-inner {
+        min-height: 76px;
+    }
+
+    .home-page .brand-text small {
+        display: none;
+    }
+
+    .home-page .home-hero {
+        min-height: 720px;
+        padding: 94px 0 72px;
+    }
+
+    .home-page .hero-content {
+        width: calc(100% - 28px);
+        text-align: left;
+    }
+
+    .home-page #hero-title {
+        font-size: 3rem;
+    }
+
+    .home-page .hero-content p {
+        margin-left: 0;
+        font-size: 1.04rem;
+    }
+
+    .home-page .home-search-panel {
+        width: 100%;
+        margin-top: 30px;
+        padding: 15px;
+        border-radius: 8px;
+        background: #fff;
+        box-shadow: 0 18px 42px rgba(0, 0, 0, 0.24);
+    }
+
+    .home-search-panel .search-fields {
+        grid-template-columns: auto minmax(0, 1fr);
+        gap: 10px 12px;
+    }
+
+    .home-search-panel .search-fields:before {
+        content: none;
+    }
+
+    .home-search-panel .search-divider,
+    .home-search-panel .search-mode {
+        display: none;
+    }
+
+    .home-search-panel .country-mark {
+        margin-left: 0;
+    }
+
+    .home-search-panel .search-fields label {
+        height: 54px;
+        padding-right: 0;
+    }
+
+    .home-search-panel .search-fields input {
+        height: 54px;
+    }
+
+    .home-search-panel .search-fields button {
+        grid-column: 1 / -1;
+        height: 52px;
+        margin-top: 0;
+        color: var(--navy);
+    }
+
+    .home-assurance {
+        margin-top: -28px;
+        padding-bottom: 28px;
+    }
+
+    .assurance-grid,
+    .green-feature,
+    .inspiration-grid,
+    .nearby-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .assurance-card {
+        padding: 20px;
+    }
+
+    .green-feature {
+        gap: 24px;
+        padding-top: 34px;
+        padding-bottom: 38px;
+    }
+
+    .green-feature-media {
+        min-height: 230px;
+    }
+
+    .green-feature-copy h2 {
+        font-size: 2rem;
+    }
+
+    .home-page .destinations-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px 14px;
+    }
+
+    .home-page .destination-copy strong {
+        min-height: 0;
+    }
+
+    .home-page .destination-description {
+        min-height: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .home-page .menu-trigger small,
+    .home-page .nav-actions {
+        display: none;
+    }
+
+    .home-page #hero-title {
+        font-size: 2.45rem;
+    }
+
+    .home-page .destinations-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .inspiration-card {
+        min-height: 230px;
+    }
+}

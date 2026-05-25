@@ -1,78 +1,160 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}Tripora - Erlebnisse, Ausflüge und City Guides{% endblock %}
+{% block description %}Finde kuratierte City Guides, Ausflüge und Reiseideen für inspirierende Wochenenden in Deutschland.{% endblock %}
+
 {% block body %}
-    <header class="site-header">
-        <div class="nav-inner" aria-label="Hauptnavigation">
-            <a class="brand" href="/" aria-label="Tripora">
-                <span class="brand-spark" aria-hidden="true">T</span>
-                <span class="brand-text">
-                    <strong>TRIPORA</strong>
-                    <small>City routes</small>
-                </span>
-            </a>
-            <nav class="main-nav" aria-label="Bereiche">
-                <a href="/cool-places">Cool Places</a>
-                <a href="#cities">Reiseziele</a>
-                <a href="#weekend">Wochenende</a>
-                <a href="/api/cities">API</a>
-            </nav>
-            <div class="nav-actions" aria-label="Schnellzugriff">
-                <a class="nav-action is-filled" href="/cool-places">Inspiration</a>
-                <a class="nav-action is-outline has-icon" href="#cities">
-                    <span class="nav-login-icon" aria-hidden="true"></span>
-                    <span>Anmelden</span>
+    <div class="home-page">
+        <header class="site-header home-header">
+            <div class="nav-inner" aria-label="Hauptnavigation">
+                <button class="menu-trigger" type="button" aria-label="Menü öffnen">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <small>Menu</small>
+                </button>
+                <a class="brand" href="/" aria-label="Tripora">
+                    <span class="brand-spark" aria-hidden="true">T</span>
+                    <span class="brand-text">
+                        <strong>TRIPORA</strong>
+                        <small>City routes</small>
+                    </span>
                 </a>
-            </div>
-        </div>
-    </header>
-
-    <main>
-        <section class="hero" aria-labelledby="hero-title">
-            <div class="hero-card">
-                <div class="hero-shade" aria-hidden="true"></div>
-                <div class="hero-content">
-                    <h1 id="hero-title">Finde deine nächste Auszeit.</h1>
-                    <form class="search-panel" data-city-search autocomplete="off">
-                        <div class="search-fields">
-                            <span class="country-mark" aria-hidden="true">
-                                <span></span>
-                                <span></span>
-                                <span></span>
-                            </span>
-                            <label>
-                                <span class="sr-only">Stadt suchen</span>
-                                <input id="city-input" name="city" type="text" placeholder="z. B. Berlin" autocomplete="off" spellcheck="false" data-city-input role="combobox" aria-autocomplete="list" aria-controls="city-options" aria-expanded="false">
-                            </label>
-                            <span class="search-divider" aria-hidden="true"></span>
-                            <button type="submit">
-                                Suchen
-                            </button>
-                        </div>
-                        <div class="city-options" id="city-options" data-city-options role="listbox" aria-label="Städte"></div>
-                    </form>
-                    <p>Städte voller Wasser, Licht, Märkte und kleiner Wege, die sich wie Urlaub anfühlen.</p>
-
+                <nav class="main-nav" aria-label="Bereiche">
+                    <a href="#places">Jetzt angesagt</a>
+                    <a href="#inspire">Inspiration</a>
+                    <a href="/cool-places">Cool Places</a>
+                    <a href="/api/cities">API</a>
+                </nav>
+                <div class="nav-actions" aria-label="Schnellzugriff">
+                    <a class="nav-action is-filled" href="#inspire">Geschenk</a>
+                    <a class="nav-action is-outline has-icon" href="#support">
+                        <span class="nav-login-icon" aria-hidden="true"></span>
+                        <span>Hilfe</span>
+                    </a>
                 </div>
             </div>
-        </section>
+        </header>
 
-        <section class="feed-shell">
-            <section class="city-strip" id="cities" aria-label="Wichtigste Städte" data-city-strip></section>
+        <main>
+            <section class="hero home-hero" aria-labelledby="hero-title">
+                <div class="hero-card">
+                    <div class="hero-content">
+                        <span class="hero-kicker">Deutschland und weltweit</span>
+                        <h1 id="hero-title">Erlebnisse, Ausflüge und City Guides</h1>
+                        <p>Buche deinen nächsten Städtetrip mit kuratierten Orten, Routen und lokalen Highlights.</p>
 
-            <section class="results-shell" id="places" aria-live="polite">
-                <div class="section-heading">
-                    <h2 data-results-heading>Städte für deine nächste Reise</h2>
-                    <p data-results-copy>Zwanzig kuratierte City-Trips in Deutschland, klar und inspirierend vorgestellt.</p>
+                        <form class="search-panel home-search-panel" data-city-search autocomplete="off">
+                            <div class="search-panel-title">Finde dein nächstes Erlebnis</div>
+                            <div class="search-fields">
+                                <span class="country-mark" aria-hidden="true">
+                                    <span></span>
+                                    <span></span>
+                                    <span></span>
+                                </span>
+                                <label>
+                                    <span class="sr-only">Stadt suchen</span>
+                                    <input id="city-input" name="city" type="text" placeholder="Stadt oder Erlebnis suchen" autocomplete="off" spellcheck="false" data-city-input role="combobox" aria-autocomplete="list" aria-controls="city-options" aria-expanded="false">
+                                </label>
+                                <span class="search-divider" aria-hidden="true"></span>
+                                <span class="search-mode">City Guide</span>
+                                <button type="submit">Suchen</button>
+                            </div>
+                            <div class="city-options" id="city-options" data-city-options role="listbox" aria-label="Städte"></div>
+                        </form>
+                    </div>
                 </div>
-                <div data-city-result></div>
             </section>
-        </section>
-    </main>
 
-    <footer class="site-footer" id="weekend">
-        <span>Tripora</span>
-        <span>Kuratierte City Guides und Wochenendrouten, bereit für neue Länder.</span>
-    </footer>
+            <section class="home-assurance" id="support" aria-label="Servicevorteile">
+                <div class="assurance-grid">
+                    <article class="assurance-card">
+                        <span class="assurance-icon is-cancel" aria-hidden="true"></span>
+                        <div>
+                            <h2>Kostenlose Planung</h2>
+                            <p>Speichere Städte, vergleiche Highlights und passe deine Route jederzeit an.</p>
+                        </div>
+                    </article>
+                    <article class="assurance-card">
+                        <span class="assurance-icon is-safe" aria-hidden="true"></span>
+                        <div>
+                            <h2>Verlässliche Empfehlungen</h2>
+                            <p>Kuratierte Orte, klare Zeitfenster und kompakte Infos für entspannte Trips.</p>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <section class="green-feature" aria-labelledby="green-title">
+                <div class="green-feature-media" aria-hidden="true"></div>
+                <div class="green-feature-copy">
+                    <span>Green & Fair</span>
+                    <h2 id="green-title">Entdecke Orte bewusster und schütze, was du liebst.</h2>
+                    <p>Unsere Guides setzen auf kurze Wege, lokale Viertel und Erlebnisse, die eine Stadt nicht nur abhaken, sondern lesbar machen.</p>
+                    <a href="/cool-places">Mehr entdecken</a>
+                </div>
+            </section>
+
+            <section class="feed-shell">
+                <section class="city-strip" id="cities" aria-label="Wichtigste Städte" data-city-strip></section>
+
+                <section class="results-shell" id="places" aria-live="polite">
+                    <div class="section-heading">
+                        <h2 data-results-heading>Jetzt angesagt</h2>
+                        <p data-results-copy>Beliebte City-Erlebnisse mit klaren Routen, starken Motiven und genug Inspiration für dein nächstes Wochenende.</p>
+                    </div>
+                    <div data-city-result></div>
+                </section>
+            </section>
+
+            <section class="inspiration-section" id="inspire" aria-labelledby="inspire-title">
+                <div class="section-heading">
+                    <h2 id="inspire-title">Lass dich inspirieren</h2>
+                    <p>Ideen für Reisen, die direkt nach einem Plan klingen.</p>
+                </div>
+                <div class="inspiration-grid">
+                    <a class="inspiration-card is-water" href="?city=hamburg">
+                        <span>6 Erlebnisse</span>
+                        <strong>Die besten Städte für Wasser, Hafen und Abendlicht</strong>
+                    </a>
+                    <a class="inspiration-card is-culture" href="?city=berlin">
+                        <span>8 Erlebnisse</span>
+                        <strong>Kunst, Design und kreative Viertel in Deutschland</strong>
+                    </a>
+                    <a class="inspiration-card is-weekend" href="/cool-places?city=duisburg">
+                        <span>5 Orte</span>
+                        <strong>Cool Places für ein Wochenende abseits der Klassiker</strong>
+                    </a>
+                </div>
+            </section>
+
+            <section class="nearby-section" id="nearby" aria-labelledby="nearby-title">
+                <div class="section-heading">
+                    <h2 id="nearby-title">Das findet jetzt in deiner Nähe statt</h2>
+                    <p>Schnelle Ideen für kurze Wege, Museen, Wasser und urbane Pausen.</p>
+                </div>
+                <div class="nearby-grid">
+                    <a class="nearby-card" href="?city=cologne">
+                        <strong>Köln</strong>
+                        <span>Dom, Rhein und Popkultur</span>
+                    </a>
+                    <a class="nearby-card" href="?city=duisburg">
+                        <strong>Duisburg</strong>
+                        <span>Industriekultur und Innenhafen</span>
+                    </a>
+                    <a class="nearby-card" href="?city=duesseldorf">
+                        <strong>Düsseldorf</strong>
+                        <span>Kunst, Rhein und japanisches Viertel</span>
+                    </a>
+                </div>
+            </section>
+        </main>
+
+        <footer class="site-footer" id="weekend">
+            <span>Tripora</span>
+            <span>Kuratierte City Guides und Wochenendrouten, bereit für neue Länder.</span>
+        </footer>
+    </div>
 
     <script>window.CITY_GUIDE_DATA = {{ citiesJson|raw }};</script>
 {% endblock %}
