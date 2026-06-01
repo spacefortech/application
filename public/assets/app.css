@@ -62,9 +62,10 @@ input {
     left: 0;
     right: 0;
     z-index: 100;
-    color: #fff;
-    background: linear-gradient(180deg, rgba(7, 8, 62, 0.58), rgba(7, 8, 62, 0.18) 72%, rgba(7, 8, 62, 0));
+    color: var(--navy);
+    background: rgba(255, 255, 255, 0.92);
     backdrop-filter: blur(12px);
+    box-shadow: 0 14px 34px rgba(7, 8, 62, 0.12);
 }
 
 .nav-inner {
@@ -83,7 +84,7 @@ input {
     width: 48px;
     border: 0;
     background: transparent;
-    color: #fff;
+    color: currentColor;
     cursor: pointer;
 }
 
@@ -96,7 +97,7 @@ input {
 }
 
 .menu-trigger small {
-    color: rgba(255, 255, 255, 0.86);
+    color: rgba(7, 8, 62, 0.72);
     font-size: 0.72rem;
 }
 
@@ -105,7 +106,7 @@ input {
     align-items: center;
     gap: 11px;
     margin-right: 8px;
-    color: #fff;
+    color: currentColor;
     font-weight: 900;
     letter-spacing: 0;
 }
@@ -137,7 +138,7 @@ input {
 }
 
 .brand-text small {
-    color: rgba(255, 255, 255, 0.82);
+    color: rgba(7, 8, 62, 0.7);
     font-size: 0.66rem;
     font-weight: 800;
     letter-spacing: 0.04em;
@@ -153,10 +154,10 @@ input {
 
 .main-nav a {
     padding: 10px 11px;
-    color: #fff;
+    color: currentColor;
     font-size: 0.9rem;
     font-weight: 800;
-    text-shadow: 0 2px 14px rgba(0, 0, 0, 0.35);
+    text-shadow: none;
 }
 
 .main-nav a:after {
@@ -218,13 +219,13 @@ input {
 }
 
 .nav-action.is-filled {
-    background: #fff;
-    color: var(--navy);
+    background: var(--navy);
+    color: #fff;
 }
 
 .nav-action.is-outline {
-    border: 1px solid rgba(255, 255, 255, 0.86);
-    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(7, 8, 62, 0.16);
+    background: rgba(7, 8, 62, 0.04);
     backdrop-filter: blur(10px);
 }
 
@@ -2524,8 +2525,7 @@ h1 {
 }
 
 .home-page .site-header {
-    background:
-        linear-gradient(180deg, rgba(5, 8, 49, 0.72), rgba(5, 8, 49, 0.18) 78%, rgba(5, 8, 49, 0));
+    background: rgba(255, 255, 255, 0.92);
 }
 
 .home-page .nav-inner {
