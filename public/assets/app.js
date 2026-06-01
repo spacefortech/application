@@ -143,11 +143,13 @@
     function openOptions() {
         renderOptions(input.value);
         form.classList.add('is-options-open');
+        document.body.classList.add('is-city-search-open');
         input.setAttribute('aria-expanded', 'true');
     }
 
     function closeOptions() {
         form.classList.remove('is-options-open');
+        document.body.classList.remove('is-city-search-open');
         input.setAttribute('aria-expanded', 'false');
         input.removeAttribute('aria-activedescendant');
     }

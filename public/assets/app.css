@@ -2560,9 +2560,13 @@ h1 {
     min-height: 670px;
     padding: 118px 16px 112px;
     background:
-        linear-gradient(180deg, rgba(4, 8, 29, 0.18), rgba(4, 8, 29, 0.6)),
-        linear-gradient(90deg, rgba(4, 8, 29, 0.62), rgba(4, 8, 29, 0.22) 48%, rgba(255, 122, 26, 0.2)),
-        url("/assets/header-sea-hero.png") center 44% / cover no-repeat;
+        linear-gradient(180deg, rgba(4, 8, 29, 0.05), rgba(4, 8, 29, 0.22)),
+        linear-gradient(90deg, rgba(4, 8, 29, 0.18), rgba(4, 8, 29, 0.06) 48%, rgba(255, 122, 26, 0.1)),
+        url("/assets/header-brandenburger-tor.jpg") center 44% / cover no-repeat;
+}
+
+body.is-city-search-open .home-page .home-hero {
+    z-index: 6;
 }
 
 .home-page .home-hero:after {
