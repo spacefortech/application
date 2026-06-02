@@ -77,30 +77,6 @@ input {
     margin: 0 auto;
 }
 
-.menu-trigger {
-    display: inline-grid;
-    gap: 4px;
-    justify-items: center;
-    width: 48px;
-    border: 0;
-    background: transparent;
-    color: currentColor;
-    cursor: pointer;
-}
-
-.menu-trigger span {
-    display: block;
-    width: 22px;
-    height: 2px;
-    border-radius: 999px;
-    background: currentColor;
-}
-
-.menu-trigger small {
-    color: rgba(7, 8, 62, 0.72);
-    font-size: 0.72rem;
-}
-
 .brand {
     display: inline-flex;
     align-items: center;
@@ -150,6 +126,7 @@ input {
     align-items: center;
     gap: 8px;
     margin-right: auto;
+    min-width: 0;
 }
 
 .main-nav a {
@@ -158,6 +135,12 @@ input {
     font-size: 0.9rem;
     font-weight: 800;
     text-shadow: none;
+    border-radius: 999px;
+    transition: background 160ms ease, color 160ms ease;
+}
+
+.main-nav a:hover {
+    background: rgba(7, 8, 62, 0.06);
 }
 
 .main-nav a:after {
@@ -181,6 +164,7 @@ input {
     font-size: 0.9rem;
     font-weight: 900;
     white-space: nowrap;
+    transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease, border-color 160ms ease, color 160ms ease;
 }
 
 .nav-action.has-icon {
@@ -224,9 +208,20 @@ input {
 }
 
 .nav-action.is-outline {
-    border: 1px solid rgba(7, 8, 62, 0.16);
-    background: rgba(7, 8, 62, 0.04);
+    border: 1px solid rgba(7, 8, 62, 0.18);
+    background: rgba(7, 8, 62, 0.06);
     backdrop-filter: blur(10px);
+    color: var(--navy);
+}
+
+.nav-action.is-outline:hover {
+    border-color: rgba(7, 8, 62, 0.28);
+    background: rgba(7, 8, 62, 0.1);
+}
+
+.nav-action.is-filled:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 26px rgba(7, 3, 79, 0.24);
 }
 
 .hero {
@@ -1505,15 +1500,18 @@ h1 {
     }
 
     .main-nav {
+        flex: 1 1 auto;
+        overflow-x: auto;
+        padding: 4px 0;
+        scrollbar-width: none;
+    }
+
+    .main-nav::-webkit-scrollbar {
         display: none;
     }
 
     .nav-actions {
         margin-left: auto;
-    }
-
-    .nav-action.is-outline {
-        display: none;
     }
 
     .hero {
@@ -1656,8 +1654,13 @@ h1 {
 }
 
 @media (max-width: 480px) {
-    .nav-actions {
+    .main-nav {
         display: none;
+    }
+
+    .nav-actions {
+        display: flex;
+        margin-left: auto;
     }
 
     .destinations-grid {
@@ -2534,10 +2537,6 @@ h1 {
     gap: 18px;
 }
 
-.home-page .menu-trigger {
-    flex: 0 0 auto;
-}
-
 .home-page .brand {
     margin-right: 10px;
 }
@@ -2589,6 +2588,7 @@ body.is-city-search-open .home-page .home-hero {
     font-size: 5.1rem;
     line-height: 0.96;
     text-transform: uppercase;
+    color: rgba(255, 233, 214, 0.98);
 }
 
 .home-page .hero-content p {
@@ -3237,11 +3237,6 @@ body.is-city-search-open .home-page .home-hero {
 }
 
 @media (max-width: 480px) {
-    .home-page .menu-trigger small,
-    .home-page .nav-actions {
-        display: none;
-    }
-
     .home-page #hero-title {
         font-size: 2.45rem;
     }
