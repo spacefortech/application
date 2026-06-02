@@ -80,45 +80,15 @@ input {
 .brand {
     display: inline-flex;
     align-items: center;
-    gap: 11px;
     margin-right: 8px;
     color: currentColor;
-    font-weight: 900;
-    letter-spacing: 0;
+    padding: 6px 0;
 }
 
-.brand-spark {
-    display: inline-grid;
-    place-items: center;
-    width: 38px;
-    height: 30px;
-    border-radius: 10px 10px 10px 3px;
-    background: var(--orange);
-    color: #fff;
-    font-size: 1.45rem;
-    font-weight: 900;
-    line-height: 1;
-    box-shadow: 0 12px 28px rgba(255, 122, 26, 0.32);
-    transform: rotate(-9deg);
-}
-
-.brand-text {
-    display: grid;
-    gap: 1px;
-    line-height: 1;
-}
-
-.brand-text strong {
-    font-size: 1rem;
-    letter-spacing: 0.08em;
-}
-
-.brand-text small {
-    color: rgba(7, 8, 62, 0.7);
-    font-size: 0.66rem;
-    font-weight: 800;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
+.brand-logo {
+    display: block;
+    height: 40px;
+    width: auto;
 }
 
 .main-nav {
@@ -1499,6 +1469,10 @@ h1 {
         min-height: 78px;
     }
 
+    .brand-logo {
+        height: 36px;
+    }
+
     .main-nav {
         flex: 1 1 auto;
         overflow-x: auto;
@@ -1656,6 +1630,10 @@ h1 {
 @media (max-width: 480px) {
     .main-nav {
         display: none;
+    }
+
+    .brand-logo {
+        height: 32px;
     }
 
     .nav-actions {
@@ -3120,10 +3098,6 @@ body.is-city-search-open .home-page .home-hero {
 @media (max-width: 720px) {
     .home-page .nav-inner {
         min-height: 76px;
-    }
-
-    .home-page .brand-text small {
-        display: none;
     }
 
     .home-page .home-hero {
