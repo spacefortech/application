@@ -92,7 +92,7 @@
 
     function activateCity(slug) {
         var activeSlug = slug || '';
-        var selectors = ['[data-city-button]', '[data-city-card]', '[data-destination-card]'];
+        var selectors = ['[data-city-button]', '[data-city-card]', '[data-destination-card]', '[data-home-experience-card]'];
 
         selectors.forEach(function (selector) {
             var nodes = document.querySelectorAll(selector);
@@ -165,16 +165,26 @@
     }
 
     function renderCityStrip() {
-        cityStrip.innerHTML = cities.map(function (city) {
+        cityStrip.innerHTML = cities.map(function (city, index) {
             var position = getSpritePosition(city, 0);
             var spotsCount = Array.isArray(city.spots) ? city.spots.length : (typeof city.spotsCount === 'number' ? city.spotsCount : null);
             var meta = [city.region, spotsCount !== null ? (spotsCount + ' Spots') : null].filter(Boolean).join(' · ');
+            var tags = [
+                city.duration || null,
+                Array.isArray(city.neighborhoods) && city.neighborhoods.length ? city.neighborhoods[0] : null
+            ].filter(Boolean);
+            var cardClass = 'city-card' + (index === 0 || index === 5 || index === 12 ? ' is-featured' : '');
 
-            return '<button class="city-card" data-city-card data-city-slug="' + escapeHtml(city.slug) + '" type="button">' +
+            return '<button class="' + cardClass + '" data-city-card data-city-slug="' + escapeHtml(city.slug) + '" type="button">' +
                 '<span class="city-tile-media" aria-hidden="true" style="--sprite-x: ' + position.x + '%; --sprite-y: ' + position.y + '%; --city-accent: ' + escapeHtml(city.accent || '#ff7a1a') + ';"></span>' +
                 '<span class="city-tile-content">' +
+                    '<span class="city-tile-kicker">Urlaubsregion</span>' +
                     '<strong>' + escapeHtml(city.displayName) + '</strong>' +
                     '<span class="city-tile-meta">' + escapeHtml(meta) + '</span>' +
+                    '<span class="city-tile-copy">' + escapeHtml(city.headline || city.bestFor || city.summary || '') + '</span>' +
+                    '<span class="city-tile-tags">' + tags.map(function (tag) {
+                        return '<span>' + escapeHtml(tag) + '</span>';
+                    }).join('') + '</span>' +
                 '</span>' +
             '</button>';
         }).join('');
@@ -193,7 +203,7 @@
                     setSearchCity(city);
                     renderCity(city);
                     
-                    var targetCard = result.querySelector('[data-destination-card][data-city-slug="' + city.slug + '"]');
+                    var targetCard = result.querySelector('[data-home-experience-card][data-city-slug="' + city.slug + '"], [data-destination-card][data-city-slug="' + city.slug + '"]');
                     if (targetCard) {
                         targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     }
@@ -222,6 +232,112 @@
             price: prices[index % prices.length],
             perks: [perk, city.duration || 'Wochenende', 'Sofort verfügbar']
         };
+    }
+
+    function getSpotItems(sourceCities, limit) {
+        var items = [];
+
+        sourceCities.forEach(function (city, cityIndex) {
+            var spots = Array.isArray(city.spots) ? city.spots : [];
+
+            spots.forEach(function (spot, spotIndex) {
+                items.push({
+                    city: city,
+                    cityIndex: cityIndex,
+                    spot: spot,
+                    spotIndex: spotIndex
+                });
+            });
+        });
+
+        return items.slice(0, limit);
+    }
+
+    function getPackageHref(city) {
+        return '/highlights-paket?city=' + encodeURIComponent(city.slug);
+    }
+
+    function renderHomePackageCard(city, index, activeSlug, featured) {
+        var position = getSpritePosition(city, index);
+        var isActive = city.slug === activeSlug;
+        var spotsCount = Array.isArray(city.spots) ? city.spots.length : 0;
+        var title = city.displayName + ' Highlights-Paket';
+        var details = [
+            city.duration || 'Wochenende',
+            spotsCount ? (spotsCount + ' Stopps') : null,
+            city.region || null
+        ].filter(Boolean);
+
+        return '<a class="home-experience-card is-package' + (featured ? ' is-featured' : '') + (isActive ? ' is-active' : '') + '" href="' + getPackageHref(city) + '" data-home-experience-card data-city-slug="' + escapeHtml(city.slug) + '" aria-label="' + escapeHtml(title) + ' ansehen" style="--sprite-x: ' + position.x + '%; --sprite-y: ' + position.y + '%; --city-accent: ' + escapeHtml(city.accent || '#ff7a1a') + ';">' +
+            '<span class="home-card-media" aria-hidden="true"></span>' +
+            '<span class="home-card-body">' +
+                '<span class="home-card-label">Highlights-Paket</span>' +
+                '<strong>' + escapeHtml(title) + '</strong>' +
+                '<span class="home-card-copy">' + escapeHtml(city.summary || city.headline || city.bestFor || '') + '</span>' +
+                '<span class="home-card-details">' + details.map(function (detail) {
+                    return '<span>' + escapeHtml(detail) + '</span>';
+                }).join('') + '</span>' +
+                '<span class="home-card-action">Zum Paket</span>' +
+            '</span>' +
+        '</a>';
+    }
+
+    function renderHomeSpotCard(item, index, activeSlug) {
+        var city = item.city;
+        var spot = item.spot || {};
+        var position = getSpritePosition(city, item.cityIndex + index);
+        var isActive = city.slug === activeSlug;
+        var meta = [city.displayName, spot.area].filter(Boolean).join(' · ');
+        var details = [spot.type, spot.time].filter(Boolean);
+
+        return '<a class="home-experience-card is-spot' + (isActive ? ' is-active' : '') + '" href="/einzelattraktion?city=' + encodeURIComponent(city.slug) + '" data-home-experience-card data-city-slug="' + escapeHtml(city.slug) + '" aria-label="' + escapeHtml(spot.name || city.displayName) + ' ansehen" style="--sprite-x: ' + position.x + '%; --sprite-y: ' + position.y + '%; --city-accent: ' + escapeHtml(city.accent || '#ff7a1a') + ';">' +
+            '<span class="home-spot-media">' +
+                '<span class="home-spot-thumb" aria-hidden="true"></span>' +
+                '<span class="home-spot-overlay">' +
+                    '<span class="home-card-label">Einzelattraktion</span>' +
+                    '<span class="home-spot-city">' + escapeHtml(meta) + '</span>' +
+                '</span>' +
+            '</span>' +
+            '<span class="home-card-body">' +
+                '<strong>' + escapeHtml(spot.name || city.displayName) + '</strong>' +
+                '<span class="home-card-copy">' + escapeHtml(spot.note || city.summary || '') + '</span>' +
+                '<span class="home-card-details">' + details.map(function (detail) {
+                    return '<span>' + escapeHtml(detail) + '</span>';
+                }).join('') + '</span>' +
+                '<span class="home-card-action">Spot ansehen</span>' +
+            '</span>' +
+        '</a>';
+    }
+
+    function renderHomeMixedGrid(activeCity, notice) {
+        var activeSlug = activeCity ? activeCity.slug : '';
+        var packageCities = activeCity ? [activeCity] : cities.slice(0, 6);
+        var spotCities = activeCity ? [activeCity] : cities;
+        var spotItems = getSpotItems(spotCities, activeCity ? 8 : 10);
+        var cards = [];
+
+        if (packageCities.length) {
+            cards.push(renderHomePackageCard(packageCities[0], 0, activeSlug, true));
+        }
+
+        spotItems.slice(0, 2).forEach(function (item, index) {
+            cards.push(renderHomeSpotCard(item, index, activeSlug));
+        });
+
+        packageCities.slice(1, activeCity ? 1 : 4).forEach(function (city, index) {
+            cards.push(renderHomePackageCard(city, index + 1, activeSlug, false));
+        });
+
+        spotItems.slice(2).forEach(function (item, index) {
+            cards.push(renderHomeSpotCard(item, index + 2, activeSlug));
+        });
+
+        heading.textContent = notice ? 'Stadt nicht gefunden' : (activeCity ? (activeCity.displayName + ' als Kurztrip') : 'Dein Kurztrip-Mix');
+        copy.textContent = notice || (activeCity ? 'Ein Reisegefühl, ein Paket und einzelne Orte, die du sofort in deinen Tag einbauen kannst.' : 'Highlights-Pakete für den ganzen Tag und einzelne Lieblingsorte für spontane Stopps.');
+        activateCity(activeSlug);
+        result.innerHTML = (notice ? '<div class="empty-state"><strong>Keine passende Stadt gefunden.</strong><p>Wähle eine der kuratierten Städte unten oder suche nach einer anderen Schreibweise.</p></div>' : '') +
+            '<div class="home-mixed-grid">' + cards.join('') + '</div>';
+        bindDestinationCards();
     }
 
     function renderDestinationCard(city, index, activeSlug) {
@@ -276,6 +392,11 @@
     }
 
     function renderDestinationGrid(activeCity, notice) {
+        if (document.querySelector('.home-page')) {
+            renderHomeMixedGrid(activeCity, notice);
+            return;
+        }
+
         var activeSlug = activeCity ? activeCity.slug : '';
         var destinationCards = cities.slice(0, 20).map(function (city, index) {
             return renderDestinationCard(city, index, activeSlug);

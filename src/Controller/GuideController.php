@@ -48,10 +48,16 @@ class GuideController extends AbstractController
     {
         $page = max(1, (int) $request->query->get('page', 1));
         $perPage = max(6, (int) $request->query->get('perPage', 24));
+        $cityQuery = (string) $request->query->get('city', '');
+        $selectedCity = $cityQuery !== '' ? $this->findCity($cityQuery) : null;
 
         $items = array();
 
         foreach ($this->getCities() as $city) {
+            if ($selectedCity && $city['slug'] !== $selectedCity['slug']) {
+                continue;
+            }
+
             $spots = isset($city['spots']) && is_array($city['spots']) ? $city['spots'] : array();
             $imageIndex = isset($city['imageIndex']) && is_numeric($city['imageIndex']) ? (int) $city['imageIndex'] : 0;
             $column = $imageIndex % 4;
@@ -96,6 +102,10 @@ class GuideController extends AbstractController
             'perPage' => $perPage,
             'totalItems' => $totalItems,
             'totalPages' => $totalPages,
+            'selectedCity' => $selectedCity ? array(
+                'slug' => $selectedCity['slug'],
+                'displayName' => $selectedCity['displayName'],
+            ) : null,
         ));
     }
 
