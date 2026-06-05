@@ -15,3 +15,11 @@ guide_city:
     path: /api/cities/{slug}
     controller: App\Controller\GuideController::apiCity
     methods: [GET]
+
+guide_einzelattraktion:
+    path: /einzelattraktion
+    controller: App\Controller\GuideController::einzelattraktion
+
+guide_highlights_paket:
+    path: /highlights-paket
+    controller: App\Controller\GuideController::highlightsPaket

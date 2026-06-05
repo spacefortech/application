@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class GuideController extends AbstractController
@@ -41,6 +42,59 @@ class GuideController extends AbstractController
         }
 
         return new JsonResponse($city);
+    }
+
+    public function einzelattraktion(Request $request): Response
+    {
+        $page = max(1, (int) $request->query->get('page', 1));
+        $perPage = max(6, (int) $request->query->get('perPage', 24));
+
+        $items = array();
+
+        foreach ($this->getCities() as $city) {
+            $spots = isset($city['spots']) && is_array($city['spots']) ? $city['spots'] : array();
+
+            foreach ($spots as $index => $spot) {
+                $items[] = array(
+                    'id' => $city['slug'] . '-' . $index,
+                    'slug' => $this->normalize($city['slug'] . '-' . ($spot['name'] ?? (string) $index)),
+                    'city' => array(
+                        'slug' => $city['slug'],
+                        'displayName' => $city['displayName'],
+                        'region' => $city['region'] ?? '',
+                        'accent' => $city['accent'] ?? '#0b0c3f',
+                    ),
+                    'spot' => array(
+                        'type' => $spot['type'] ?? '',
+                        'name' => $spot['name'] ?? '',
+                        'area' => $spot['area'] ?? '',
+                        'note' => $spot['note'] ?? '',
+                        'time' => $spot['time'] ?? '',
+                    ),
+                );
+            }
+        }
+
+        $totalItems = count($items);
+        $totalPages = (int) ceil($totalItems / max(1, $perPage));
+        $totalPages = max(1, $totalPages);
+        $page = min($page, $totalPages);
+
+        $offset = ($page - 1) * $perPage;
+        $pageItems = array_slice($items, $offset, $perPage);
+
+        return $this->render('guide/einzelattraktion.html.twig', array(
+            'items' => $pageItems,
+            'page' => $page,
+            'perPage' => $perPage,
+            'totalItems' => $totalItems,
+            'totalPages' => $totalPages,
+        ));
+    }
+
+    public function highlightsPaket(): Response
+    {
+        return $this->render('guide/highlights_paket.html.twig');
     }
 
     private function findCity(string $slug): ?array

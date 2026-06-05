@@ -1,0 +1,94 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tripora - Einzelattraktionen{% endblock %}
+{% block description %}Alle Spots und Einzelattraktionen aus allen Städten – übersichtlich als Karten mit Pagination.{% endblock %}
+
+{% block body %}
+    <div class="places-page">
+        <header class="site-header">
+            <div class="nav-inner" aria-label="Hauptnavigation">
+                <a class="brand" href="/" aria-label="Tripora">
+                    <img
+                        class="brand-logo"
+                        src="/assets/logos/tripora_logo_v3_header.png"
+                        alt="Tripora"
+                        loading="eager"
+                        decoding="async"
+                    >
+                </a>
+                <nav class="main-nav" aria-label="Bereiche">
+                    <a href="/">Home</a>
+                    <a href="/einzelattraktion" aria-current="page">Einzelattraktion</a>
+                    <a href="/cool-places">Cool Places</a>
+                    <a href="/api/cities">API</a>
+                </nav>
+                <div class="nav-actions" aria-label="Schnellzugriff">
+                    <a class="nav-action is-outline has-icon" href="#support">
+                        <span class="nav-login-icon" aria-hidden="true"></span>
+                        <span>Anmelden</span>
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <main class="has-fixed-header-offset">
+            <section class="feed-shell" id="support" aria-label="Einzelattraktionen">
+                <section class="home-category-bar" aria-label="Schnellnavigation">
+                    <div class="category-row home-category-row" role="tablist" aria-label="Kategorien">
+                        <a href="/">Startseite</a>
+                        <a class="is-active" href="/einzelattraktion">Einzelattraktion</a>
+                        <a href="/highlights-paket">Highlights-Paket</a>
+                    </div>
+                </section>
+
+                <div class="section-heading is-left" aria-label="Alle Spots">
+                    <h2>Einzelattraktionen</h2>
+                    <p>Alle Spots aus allen Städten – Seite {{ page }} von {{ totalPages }}.</p>
+                </div>
+
+                <section class="cool-place-grid spot-grid" aria-label="Spots">
+                    {% for item in items %}
+                        <article class="cool-place-card is-placeholder spot-card" style="--city-accent: {{ item.city.accent }};">
+                            <div class="cool-place-photo">
+                                <span class="spot-city-pill">{{ item.city.displayName }}</span>
+                            </div>
+                            <div class="cool-place-card-body">
+                                <div class="cool-place-meta">
+                                    <span>{{ item.spot.type }}</span>
+                                    <span>{{ item.spot.time }}</span>
+                                </div>
+                                <h3>{{ item.spot.name }}</h3>
+                                <p>{{ item.spot.note }}</p>
+                                <div class="cool-place-foot">
+                                    <span>{{ item.spot.area }}</span>
+                                    <small>{{ item.city.region }}</small>
+                                </div>
+                            </div>
+                        </article>
+                    {% endfor %}
+                </section>
+
+                <nav class="pagination" aria-label="Pagination">
+                    {% if page > 1 %}
+                        <a class="pagination-link" href="{{ path('guide_einzelattraktion', { page: page - 1, perPage: perPage }) }}">‹ Prev</a>
+                    {% else %}
+                        <span class="pagination-link is-disabled">‹ Prev</span>
+                    {% endif %}
+
+                    <span class="pagination-info">Pagina {{ page }} / {{ totalPages }}</span>
+
+                    {% if page < totalPages %}
+                        <a class="pagination-link" href="{{ path('guide_einzelattraktion', { page: page + 1, perPage: perPage }) }}">Next ›</a>
+                    {% else %}
+                        <span class="pagination-link is-disabled">Next ›</span>
+                    {% endif %}
+                </nav>
+            </section>
+        </main>
+
+        <footer class="site-footer">
+            <span>Tripora</span>
+            <span>Einzelattraktionen – alle Spots aus allen Städten.</span>
+        </footer>
+    </div>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tripora - Highlights-Paket{% endblock %}
+{% block description %}Highlights-Paket – kuratierte Pakete pro Stadt (coming soon).{% endblock %}
+
+{% block body %}
+    <div class="places-page">
+        <header class="site-header">
+            <div class="nav-inner" aria-label="Hauptnavigation">
+                <a class="brand" href="/" aria-label="Tripora">
+                    <img
+                        class="brand-logo"
+                        src="/assets/logos/tripora_logo_v3_header.png"
+                        alt="Tripora"
+                        loading="eager"
+                        decoding="async"
+                    >
+                </a>
+                <nav class="main-nav" aria-label="Bereiche">
+                    <a href="/">Home</a>
+                    <a href="/einzelattraktion">Einzelattraktion</a>
+                    <a href="/highlights-paket" aria-current="page">Highlights-Paket</a>
+                    <a href="/cool-places">Cool Places</a>
+                    <a href="/api/cities">API</a>
+                </nav>
+                <div class="nav-actions" aria-label="Schnellzugriff">
+                    <a class="nav-action is-outline has-icon" href="#support">
+                        <span class="nav-login-icon" aria-hidden="true"></span>
+                        <span>Anmelden</span>
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <main class="has-fixed-header-offset">
+            <section class="feed-shell" id="support" aria-label="Highlights-Paket">
+                <section class="home-category-bar" aria-label="Schnellnavigation">
+                    <div class="category-row home-category-row" role="tablist" aria-label="Kategorien">
+                        <a href="/">Startseite</a>
+                        <a href="/einzelattraktion">Einzelattraktion</a>
+                        <a class="is-active" href="/highlights-paket">Highlights-Paket</a>
+                    </div>
+                </section>
+
+                <div class="section-heading is-left" aria-label="Highlights-Paket">
+                    <h2>Highlights-Paket</h2>
+                    <p>Coming soon: kuratierte Pakete pro Stadt.</p>
+                </div>
+            </section>
+        </main>
+
+        <footer class="site-footer">
+            <span>Tripora</span>
+            <span>Highlights-Paket.</span>
+        </footer>
+    </div>
+{% endblock %}
+
