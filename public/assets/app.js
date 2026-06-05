@@ -165,7 +165,9 @@
     }
 
     function renderCityStrip() {
-        cityStrip.innerHTML = cities.map(function (city, index) {
+        var visibleCities = cities.slice(0, 8);
+
+        cityStrip.innerHTML = visibleCities.map(function (city, index) {
             var position = getSpritePosition(city, 0);
             var spotsCount = Array.isArray(city.spots) ? city.spots.length : (typeof city.spotsCount === 'number' ? city.spotsCount : null);
             var meta = [city.region, spotsCount !== null ? (spotsCount + ' Spots') : null].filter(Boolean).join(' · ');
@@ -311,32 +313,53 @@
 
     function renderHomeMixedGrid(activeCity, notice) {
         var activeSlug = activeCity ? activeCity.slug : '';
-        var packageCities = activeCity ? [activeCity] : cities.slice(0, 6);
+        var packageCities = activeCity ? [activeCity] : cities.slice(0, 8);
         var spotCities = activeCity ? [activeCity] : cities;
-        var spotItems = getSpotItems(spotCities, activeCity ? 8 : 10);
-        var cards = [];
+        var spotItems = getSpotItems(spotCities, activeCity ? 9 : 12);
+        var packageCards = [];
+        var spotCards = [];
 
-        if (packageCities.length) {
-            cards.push(renderHomePackageCard(packageCities[0], 0, activeSlug, true));
-        }
-
-        spotItems.slice(0, 2).forEach(function (item, index) {
-            cards.push(renderHomeSpotCard(item, index, activeSlug));
+        packageCities.forEach(function (city, index) {
+            packageCards.push(renderHomePackageCard(city, index, activeSlug, false));
         });
 
-        packageCities.slice(1, activeCity ? 1 : 4).forEach(function (city, index) {
-            cards.push(renderHomePackageCard(city, index + 1, activeSlug, false));
+        spotItems.forEach(function (item, index) {
+            spotCards.push(renderHomeSpotCard(item, index, activeSlug));
         });
 
-        spotItems.slice(2).forEach(function (item, index) {
-            cards.push(renderHomeSpotCard(item, index + 2, activeSlug));
-        });
+        var packagesHref = activeCity ? getPackageHref(activeCity) : '/highlights-paket';
+        var spotsHref = activeCity ? ('/einzelattraktion?city=' + encodeURIComponent(activeSlug)) : '/einzelattraktion';
 
         heading.textContent = notice ? 'Stadt nicht gefunden' : (activeCity ? (activeCity.displayName + ' als Kurztrip') : 'Dein Kurztrip-Mix');
-        copy.textContent = notice || (activeCity ? 'Ein Reisegefühl, ein Paket und einzelne Orte, die du sofort in deinen Tag einbauen kannst.' : 'Highlights-Pakete für den ganzen Tag und einzelne Lieblingsorte für spontane Stopps.');
+        copy.textContent = notice || (activeCity
+            ? 'Starte mit einem Highlights‑Paket und ergänze es mit passenden Einzelattraktionen.'
+            : 'Highlights‑Pakete für den ganzen Tag – plus Einzelattraktionen für spontane Stopps.');
         activateCity(activeSlug);
+
         result.innerHTML = (notice ? '<div class="empty-state"><strong>Keine passende Stadt gefunden.</strong><p>Wähle eine der kuratierten Städte unten oder suche nach einer anderen Schreibweise.</p></div>' : '') +
-            '<div class="home-mixed-grid">' + cards.join('') + '</div>';
+            '<div class="home-results">' +
+                '<section class="home-results-section is-packages" aria-label="Highlights-Pakete">' +
+                    '<header class="home-results-section-header">' +
+                        '<div class="home-results-section-title">' +
+                            '<h3>Highlights‑Paket</h3>' +
+                            '<p>Ein kompletter Tagesplan als Paket – ideal als Basis für deinen Trip.</p>' +
+                        '</div>' +
+                        '<a class="home-results-link" href="' + packagesHref + '">Alle Pakete</a>' +
+                    '</header>' +
+                    '<div class="home-package-grid">' + packageCards.join('') + '</div>' +
+                '</section>' +
+                '<section class="home-results-section is-spots" aria-label="Einzelattraktionen">' +
+                    '<header class="home-results-section-header">' +
+                        '<div class="home-results-section-title">' +
+                            '<h3>Einzelattraktionen</h3>' +
+                            '<p>Einzelne Orte, die du spontan hinzufügen kannst – kurz, klar, direkt umsetzbar.</p>' +
+                        '</div>' +
+                        '<a class="home-results-link" href="' + spotsHref + '">Alle Spots</a>' +
+                    '</header>' +
+                    '<div class="home-spots-grid">' + spotCards.join('') + '</div>' +
+                '</section>' +
+            '</div>';
+
         bindDestinationCards();
     }
 
