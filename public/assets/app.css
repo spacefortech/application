@@ -2641,6 +2641,37 @@ body.is-city-search-open .home-page .home-hero {
     display: none;
 }
 
+.home-category-bar {
+    position: relative;
+    z-index: 7;
+    padding: 0 16px 30px;
+}
+
+.home-category-row {
+    justify-content: flex-start;
+    margin-bottom: 0;
+}
+
+.home-category-row button {
+    min-height: 34px;
+    padding: 0 10px;
+    font-size: 0.8rem;
+    border-color: rgba(7, 8, 62, 0.16);
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 12px 24px rgba(7, 8, 62, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+.home-category-row button:hover {
+    border-color: rgba(7, 8, 62, 0.28);
+}
+
+.home-category-row button.is-active {
+    border-color: var(--navy);
+    background: var(--navy);
+    color: #fff;
+}
+
 .home-page .hero-content {
     width: min(980px, 100%);
     text-align: center;
