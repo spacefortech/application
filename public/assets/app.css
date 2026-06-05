@@ -2848,6 +2848,7 @@ body.is-city-search-open .home-page .home-hero {
     pointer-events: none;
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.65), transparent 46%);
     opacity: 0.9;
+    border-radius: inherit;
 }
 
 .home-search-panel > .search-panel-title,
