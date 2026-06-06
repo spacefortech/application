@@ -451,10 +451,14 @@
         var packagesHref = activeCity ? getPackageHref(activeCity) : '/highlights-paket';
         var spotsHref = activeCity ? ('/einzelattraktion?city=' + encodeURIComponent(activeSlug)) : '/einzelattraktion';
 
-        heading.textContent = notice ? 'Stadt nicht gefunden' : (activeCity ? (activeCity.displayName + ' als Kurztrip') : 'Dein Kurztrip-Mix');
-        copy.textContent = notice || (activeCity
-            ? 'Starte mit einem Highlights‑Paket und ergänze es mit passenden Einzelattraktionen.'
-            : 'Highlights‑Pakete für den ganzen Tag – plus Einzelattraktionen für spontane Stopps.');
+        if (heading) {
+            heading.textContent = notice ? 'Stadt nicht gefunden' : (activeCity ? (activeCity.displayName + ' als Kurztrip') : 'Dein Kurztrip-Mix');
+        }
+        if (copy) {
+            copy.textContent = notice || (activeCity
+                ? 'Starte mit einem Highlights‑Paket und ergänze es mit passenden Einzelattraktionen.'
+                : 'Highlights‑Pakete für den ganzen Tag – plus Einzelattraktionen für spontane Stopps.');
+        }
         activateCity(activeSlug);
 
         result.innerHTML = (notice ? '<div class="empty-state"><strong>Keine passende Stadt gefunden.</strong><p>Wähle eine der kuratierten Städte unten oder suche nach einer anderen Schreibweise.</p></div>' : '') +
@@ -546,8 +550,12 @@
             return renderDestinationCard(city, index, activeSlug);
         }).join('');
 
-        heading.textContent = notice ? 'Stadt nicht gefunden' : 'Jetzt angesagt';
-        copy.textContent = notice || 'Beliebte City-Erlebnisse mit klaren Routen, starken Motiven und genug Inspiration für dein nächstes Wochenende.';
+        if (heading) {
+            heading.textContent = notice ? 'Stadt nicht gefunden' : 'Jetzt angesagt';
+        }
+        if (copy) {
+            copy.textContent = notice || 'Beliebte City-Erlebnisse mit klaren Routen, starken Motiven und genug Inspiration für dein nächstes Wochenende.';
+        }
         activateCity(activeSlug);
         result.innerHTML = (notice ? '<div class="empty-state"><strong>Keine passende Stadt gefunden.</strong><p>Wähle eine der kuratierten Städte unten oder suche nach einer anderen Schreibweise.</p></div>' : '') +
             '<div class="destinations-grid">' + destinationCards + '</div>';
