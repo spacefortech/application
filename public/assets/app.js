@@ -648,109 +648,6 @@
         });
     }
 
-    function bindReviewsCarousel() {
-        var carousel = document.querySelector('[data-reviews-carousel]');
-        var prev = document.querySelector('[data-reviews-prev]');
-        var next = document.querySelector('[data-reviews-next]');
-        var dots = document.querySelector('[data-reviews-dots]');
-
-        if (!carousel || !prev || !next) {
-            return;
-        }
-
-        function getStep() {
-            var card = carousel.querySelector('.review-card');
-            if (!card) {
-                return 320;
-            }
-            var styles = window.getComputedStyle(carousel);
-            var gap = parseFloat(styles.columnGap || styles.gap || '0') || 0;
-            return card.getBoundingClientRect().width + gap;
-        }
-
-        function getActiveIndex() {
-            var step = getStep();
-            if (!step) {
-                return 0;
-            }
-            return Math.max(0, Math.round(carousel.scrollLeft / step));
-        }
-
-        function scrollToIndex(index) {
-            var step = getStep();
-            carousel.scrollTo({ left: Math.max(0, index) * step, behavior: 'smooth' });
-        }
-
-        function renderDots() {
-            if (!dots) {
-                return;
-            }
-
-            var cards = carousel.querySelectorAll('.review-card');
-            if (!cards.length) {
-                return;
-            }
-
-            dots.innerHTML = Array.prototype.map.call(cards, function (_, index) {
-                return '<button class="reviews-dot" type="button" role="tab" aria-label="Rezension ' + (index + 1) + '" aria-selected="false" data-review-dot="' + index + '"></button>';
-            }).join('');
-        }
-
-        var rafId = 0;
-        function updateDots() {
-            if (!dots) {
-                return;
-            }
-            if (rafId) {
-                cancelAnimationFrame(rafId);
-            }
-            rafId = requestAnimationFrame(function () {
-                var activeIndex = getActiveIndex();
-                var buttons = dots.querySelectorAll('[data-review-dot]');
-                buttons.forEach(function (button) {
-                    var index = parseInt(button.getAttribute('data-review-dot') || '0', 10);
-                    var isActive = index === activeIndex;
-                    button.classList.toggle('is-active', isActive);
-                    button.setAttribute('aria-selected', isActive ? 'true' : 'false');
-                });
-            });
-        }
-
-        prev.addEventListener('click', function () {
-            carousel.scrollBy({ left: -getStep(), behavior: 'smooth' });
-        });
-
-        next.addEventListener('click', function () {
-            carousel.scrollBy({ left: getStep(), behavior: 'smooth' });
-        });
-
-        carousel.addEventListener('scroll', updateDots, { passive: true });
-
-        carousel.addEventListener('keydown', function (event) {
-            if (event.key === 'ArrowLeft') {
-                event.preventDefault();
-                scrollToIndex(getActiveIndex() - 1);
-            }
-            if (event.key === 'ArrowRight') {
-                event.preventDefault();
-                scrollToIndex(getActiveIndex() + 1);
-            }
-        });
-
-        if (dots) {
-            renderDots();
-            updateDots();
-            dots.addEventListener('click', function (event) {
-                var button = event.target.closest('[data-review-dot]');
-                if (!button) {
-                    return;
-                }
-                var index = parseInt(button.getAttribute('data-review-dot') || '0', 10);
-                scrollToIndex(index);
-            });
-        }
-    }
-
     function initialize() {
         if (!cities.length || !form || !input || !cityOptions) {
             return;
@@ -763,7 +660,6 @@
         renderOptions('');
         renderCityStrip();
         bindCategoryFilters();
-        bindReviewsCarousel();
 
         if (initialCity) {
             setSearchCity(initialCity);
