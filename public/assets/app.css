@@ -454,7 +454,14 @@ h1 {
     color: var(--ink);
     box-shadow: 0 22px 52px rgba(7, 8, 62, 0.2);
     text-align: left;
-    scrollbar-width: thin;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.city-options::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
 }
 
 .search-panel.is-options-open .city-options {
@@ -3081,6 +3088,14 @@ body.is-city-search-open .home-page .home-hero {
     border-color: rgba(7, 8, 62, 0.09);
     border-radius: 22px;
     box-shadow: 0 26px 60px rgba(7, 8, 62, 0.22);
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.home-search-panel .city-options::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
 }
 
 .home-search-panel .city-options-label {
