@@ -432,6 +432,42 @@
         '</a>';
     }
 
+    function renderHighlightPackageCard(city, index) {
+        var position = getSpritePosition(city, index);
+        var spotsCount = Array.isArray(city.spots) ? city.spots.length : 0;
+        var title = city.displayName + ' Highlights-Paket';
+        var duration = city.duration || 'Wochenende';
+        var summary = city.summary || city.headline || city.bestFor || 'Kuratierte Stopps, klare Reihenfolge und starke Orte für deinen Trip.';
+
+        return '<a class="cool-place-card spot-card highlight-package-card has-photo" href="' + getPackageHref(city) + '" data-city-slug="' + escapeHtml(city.slug) + '" aria-label="' + escapeHtml(title) + ' ansehen" style="--sprite-x: ' + position.x + '%; --sprite-y: ' + position.y + '%; --city-accent: ' + escapeHtml(city.accent || '#ff7a1a') + ';">' +
+            '<div class="cool-place-photo">' +
+                '<span class="spot-city-pill">' + escapeHtml(city.displayName) + '</span>' +
+            '</div>' +
+            '<div class="cool-place-card-body">' +
+                '<div class="cool-place-meta">' +
+                    '<span>Highlights-Paket</span>' +
+                    '<span>' + escapeHtml(spotsCount ? (spotsCount + ' Stopps') : duration) + '</span>' +
+                '</div>' +
+                '<h3>' + escapeHtml(title) + '</h3>' +
+                '<p>' + escapeHtml(summary) + '</p>' +
+                '<div class="cool-place-foot">' +
+                    '<span>' + escapeHtml(duration) + '</span>' +
+                    '<small>' + escapeHtml(city.region || 'Kuratierte Route') + '</small>' +
+                '</div>' +
+            '</div>' +
+        '</a>';
+    }
+
+    function renderHighlightPackageGrid(activeCity, notice) {
+        var packageCards = cities.slice(0, 20).map(function (city, index) {
+            return renderHighlightPackageCard(city, index);
+        }).join('');
+
+        activateCity(activeCity ? activeCity.slug : '');
+        result.innerHTML = (notice ? '<div class="empty-state"><strong>Keine passende Stadt gefunden.</strong><p>Wähle eine der kuratierten Städte oder suche nach einer anderen Schreibweise.</p></div>' : '') +
+            '<section class="cool-place-grid spot-grid highlight-package-grid" aria-label="Highlights-Pakete">' + packageCards + '</section>';
+    }
+
     function renderHomeMixedGrid(activeCity, notice) {
         var activeSlug = activeCity ? activeCity.slug : '';
         var packageCities = activeCity ? [activeCity] : cities.slice(0, 8);
@@ -542,6 +578,11 @@
     function renderDestinationGrid(activeCity, notice) {
         if (document.querySelector('.home-page')) {
             renderHomeMixedGrid(activeCity, notice);
+            return;
+        }
+
+        if (document.querySelector('.highlights-page')) {
+            renderHighlightPackageGrid(activeCity, notice);
             return;
         }
 

@@ -81,7 +81,47 @@
                 </section>
             </section>
 
-            
+            <section class="home-newsletter" aria-labelledby="newsletter-title">
+                <div class="home-newsletter-inner">
+                    <div class="home-newsletter-copy">
+                        <span class="newsletter-kicker">Tripora Updates</span>
+                        <h2 id="newsletter-title">Neue Reiseideen direkt in dein Postfach</h2>
+                        <p>Einmal pro Woche bekommst du kompakte City Guides, besondere Einzelattraktionen und neue Highlights-Pakete für deinen nächsten Kurztrip.</p>
+
+                        <form class="newsletter-form" action="#" method="post">
+                            <label class="newsletter-label" for="newsletter-email">E-Mail Adresse</label>
+                            <div class="newsletter-row">
+                                <input id="newsletter-email" name="email" type="email" placeholder="z.B. reisender@email.de" autocomplete="email" required>
+                                <button type="submit">Anmelden</button>
+                            </div>
+                            <label class="newsletter-consent">
+                                <input name="privacy" type="checkbox" required>
+                                <span>Ich habe die <a href="#">Datenschutzerklärung</a> gelesen und bin einverstanden, personalisierte Reiseangebote per E-Mail zu erhalten.</span>
+                            </label>
+                        </form>
+
+                        <p class="newsletter-note">Kein Spam, nur kuratierte Inspiration. Du kannst dich jederzeit wieder abmelden. *Pflichtfeld</p>
+                    </div>
+
+                    <div class="home-newsletter-media" aria-hidden="true">
+                        <span class="newsletter-postcard is-main">
+                            <span>City Guide</span>
+                            <strong>Duisburg am Wasser</strong>
+                            <small>Route, Spots und lokale Ideen</small>
+                        </span>
+                        <span class="newsletter-postcard is-spot">
+                            <span>Spot der Woche</span>
+                            <strong>Industriekultur</strong>
+                            <small>Ein Ort, der im Kopf bleibt</small>
+                        </span>
+                        <span class="newsletter-postcard is-package">
+                            <span>Highlights-Paket</span>
+                            <strong>3 Stopps für Samstag</strong>
+                            <small>Schnell geplant, direkt nutzbar</small>
+                        </span>
+                    </div>
+                </div>
+            </section>
         </main>
 
         {% include 'partials/_footer.html.twig' %}
