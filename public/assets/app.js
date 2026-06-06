@@ -10,6 +10,11 @@
     var miniSearch = document.querySelector('[data-mini-search]');
     var miniInput = document.getElementById('mini-city-input');
     var categoryButtons = document.querySelectorAll('[data-category-filter]');
+    var searchTabs = form ? form.querySelectorAll('[data-search-tab]') : [];
+    var searchFieldLabel = form ? form.querySelector('[data-search-field-label]') : null;
+    var searchModeKicker = form ? form.querySelector('[data-search-mode-kicker]') : null;
+    var searchModeLabel = form ? form.querySelector('[data-search-mode-label]') : null;
+    var activeSearchMode = form ? (form.getAttribute('data-search-mode') || 'spot') : 'spot';
     var activeOptionIndex = 0;
     var visibleOptions = [];
 
@@ -46,6 +51,48 @@
         }
     }
 
+    function setSearchCopy() {
+        var isCityMode = activeSearchMode === 'city';
+
+        if (searchFieldLabel) {
+            searchFieldLabel.textContent = isCityMode ? 'Wohin?' : 'Attraktion';
+        }
+
+        if (searchModeKicker) {
+            searchModeKicker.textContent = isCityMode ? 'Guide' : 'Typ';
+        }
+
+        if (searchModeLabel) {
+            searchModeLabel.textContent = isCityMode ? 'City Guide' : 'Einzelattraktion';
+        }
+
+        input.name = isCityMode ? 'city' : 'q';
+        input.placeholder = isCityMode ? 'Stadt oder Erlebnis suchen' : 'Attraktion oder Spot suchen';
+        cityOptions.setAttribute('aria-label', isCityMode ? 'Städte' : 'Einzelattraktionen');
+    }
+
+    function setSearchMode(mode, keepValue) {
+        activeSearchMode = mode === 'city' ? 'city' : 'spot';
+        form.setAttribute('data-search-mode', activeSearchMode);
+
+        searchTabs.forEach(function (tab) {
+            var isActive = tab.getAttribute('data-search-tab') === activeSearchMode;
+            tab.classList.toggle('is-active', isActive);
+            tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
+        });
+
+        if (!keepValue) {
+            input.value = '';
+        }
+
+        setSearchCopy();
+        activeOptionIndex = 0;
+
+        if (form.classList.contains('is-options-open')) {
+            renderOptions(input.value);
+        }
+    }
+
     function getSpritePosition(city, fallbackIndex) {
         var imageIndex = typeof city.imageIndex === 'number' ? city.imageIndex : fallbackIndex;
         var column = imageIndex % 4;
@@ -78,7 +125,12 @@
         var normalized = normalize(value);
 
         if (!normalized) {
-            return cities.slice();
+            return cities.slice().map(function (city) {
+                return {
+                    mode: 'city',
+                    city: city
+                };
+            });
         }
 
         return cities.filter(function (city) {
@@ -87,7 +139,53 @@
             return names.some(function (name) {
                 return normalize(name).indexOf(normalized) !== -1;
             });
+        }).map(function (city) {
+            return {
+                mode: 'city',
+                city: city
+            };
         });
+    }
+
+    function getSpotOptions(value) {
+        var normalized = normalize(value);
+        var items = [];
+
+        cities.forEach(function (city, cityIndex) {
+            var spots = Array.isArray(city.spots) ? city.spots : [];
+
+            spots.forEach(function (spot, spotIndex) {
+                var searchable = [
+                    city.slug,
+                    city.name,
+                    city.displayName,
+                    city.region,
+                    spot.type,
+                    spot.name,
+                    spot.area,
+                    spot.note,
+                    spot.time
+                ];
+
+                if (!normalized || searchable.some(function (value) {
+                    return normalize(value).indexOf(normalized) !== -1;
+                })) {
+                    items.push({
+                        mode: 'spot',
+                        city: city,
+                        cityIndex: cityIndex,
+                        spot: spot,
+                        spotIndex: spotIndex
+                    });
+                }
+            });
+        });
+
+        return items.slice(0, 12);
+    }
+
+    function getSearchOptions(value) {
+        return activeSearchMode === 'city' ? getCityOptions(value) : getSpotOptions(value);
     }
 
     function activateCity(slug) {
@@ -104,7 +202,7 @@
     }
 
     function updateActiveOption() {
-        var buttons = cityOptions.querySelectorAll('[data-city-option]');
+        var buttons = cityOptions.querySelectorAll('[data-search-option]');
 
         buttons.forEach(function (button, index) {
             var isActive = index === activeOptionIndex;
@@ -119,21 +217,32 @@
     }
 
     function renderOptions(value) {
-        visibleOptions = getCityOptions(value);
+        var isCityMode = activeSearchMode === 'city';
+        visibleOptions = getSearchOptions(value);
         activeOptionIndex = visibleOptions.length ? Math.max(0, Math.min(activeOptionIndex, visibleOptions.length - 1)) : -1;
 
         if (!visibleOptions.length) {
-            cityOptions.innerHTML = '<div class="city-options-label">Ort</div>' +
-                '<div class="city-option-empty">Keine Stadt gefunden</div>';
+            cityOptions.innerHTML = '<div class="city-options-label">' + (isCityMode ? 'Ort' : 'Einzelattraktion') + '</div>' +
+                '<div class="city-option-empty">' + (isCityMode ? 'Keine Stadt gefunden' : 'Keine Einzelattraktion gefunden') + '</div>';
             input.removeAttribute('aria-activedescendant');
             return;
         }
 
-        cityOptions.innerHTML = '<div class="city-options-label">Ort</div>' +
-            visibleOptions.map(function (city, index) {
-                return '<button class="city-option' + (index === activeOptionIndex ? ' is-active' : '') + '" id="city-option-' + escapeHtml(city.slug) + '" data-city-option data-city-slug="' + escapeHtml(city.slug) + '" type="button" role="option" aria-selected="' + (index === activeOptionIndex ? 'true' : 'false') + '">' +
+        cityOptions.innerHTML = '<div class="city-options-label">' + (isCityMode ? 'Ort' : 'Einzelattraktion') + '</div>' +
+            visibleOptions.map(function (option, index) {
+                var city = option.city;
+                var spot = option.spot || {};
+                var id = 'search-option-' + index + '-' + escapeHtml(city.slug);
+                var meta = isCityMode
+                    ? [city.region, Array.isArray(city.spots) ? (city.spots.length + ' Spots') : null].filter(Boolean).join(' · ')
+                    : [city.displayName, spot.type, spot.area].filter(Boolean).join(' · ');
+                var title = isCityMode ? city.displayName : (spot.name || city.displayName);
+
+                return '<button class="city-option' + (isCityMode ? ' is-city-option' : ' is-spot-option') + (index === activeOptionIndex ? ' is-active' : '') + '" id="' + id + '" data-search-option data-option-index="' + index + '" type="button" role="option" aria-selected="' + (index === activeOptionIndex ? 'true' : 'false') + '">' +
                     '<span class="city-option-pin" aria-hidden="true"></span>' +
-                    '<span><strong>' + escapeHtml(city.displayName) + '</strong></span>' +
+                    '<span class="city-option-copy"><strong>' + escapeHtml(title) + '</strong>' +
+                    (meta ? '<small>' + escapeHtml(meta) + '</small>' : '') +
+                    '</span>' +
                 '</button>';
             }).join('');
 
@@ -154,13 +263,34 @@
         input.removeAttribute('aria-activedescendant');
     }
 
-    function selectOption(city) {
-        if (!city) {
+    function getAttractionSearchHref(value, city) {
+        var params = new URLSearchParams();
+
+        if (city && city.slug) {
+            params.set('city', city.slug);
+        }
+
+        if (normalize(value)) {
+            params.set('q', value);
+        }
+
+        return '/einzelattraktion' + (params.toString() ? ('?' + params.toString()) : '');
+    }
+
+    function selectOption(option) {
+        if (!option) {
             return;
         }
 
-        setSearchCity(city);
-        renderCity(city);
+        if (option.mode === 'spot') {
+            input.value = option.spot && option.spot.name ? option.spot.name : '';
+            closeOptions();
+            window.location.href = getAttractionSearchHref(input.value, option.city);
+            return;
+        }
+
+        setSearchCity(option.city);
+        renderCity(option.city);
         closeOptions();
     }
 
@@ -202,6 +332,7 @@
                         return;
                     }
 
+                    setSearchMode('city', false);
                     setSearchCity(city);
                     renderCity(city);
                     
@@ -475,6 +606,12 @@
     function handleSearch(event, sourceInput) {
         event.preventDefault();
         closeOptions();
+
+        if (activeSearchMode === 'spot') {
+            window.location.href = getAttractionSearchHref(sourceInput.value, null);
+            return;
+        }
+
         searchFrom(sourceInput.value, true);
     }
 
@@ -625,28 +762,42 @@
     }
 
     function initialize() {
-        if (!cities.length) {
+        if (!cities.length || !form || !input || !cityOptions) {
             return;
         }
 
+        var params = new URLSearchParams(window.location.search);
+        var initialCity = findCity(params.get('city'));
+
+        setSearchMode(initialCity ? 'city' : activeSearchMode, true);
         renderOptions('');
         renderCityStrip();
         bindCategoryFilters();
         bindReviewsCarousel();
 
-        var params = new URLSearchParams(window.location.search);
-        var initialCity = findCity(params.get('city'));
-        setSearchCity(null);
+        if (initialCity) {
+            setSearchCity(initialCity);
+        } else {
+            setSearchCity(null);
+        }
+
         renderCity(initialCity);
 
+        searchTabs.forEach(function (tab) {
+            tab.addEventListener('click', function () {
+                setSearchMode(tab.getAttribute('data-search-tab'), false);
+                input.focus();
+            });
+        });
+
         cityOptions.addEventListener('click', function (event) {
-            var button = event.target.closest('[data-city-option]');
+            var button = event.target.closest('[data-search-option]');
 
             if (!button) {
                 return;
             }
 
-            selectOption(findCity(button.getAttribute('data-city-slug')));
+            selectOption(visibleOptions[parseInt(button.getAttribute('data-option-index') || '0', 10)]);
         });
 
         input.addEventListener('focus', openOptions);

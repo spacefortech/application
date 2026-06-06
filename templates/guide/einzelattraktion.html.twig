@@ -44,7 +44,11 @@
                 <div class="section-heading is-left" aria-label="Alle Spots">
                     <h2>Einzelattraktionen</h2>
                     <p>
-                        {% if selectedCity %}
+                        {% if searchQuery and selectedCity %}
+                            Ergebnisse für „{{ searchQuery }}” in {{ selectedCity.displayName }} – Seite {{ page }} von {{ totalPages }}.
+                        {% elseif searchQuery %}
+                            Ergebnisse für „{{ searchQuery }}” – Seite {{ page }} von {{ totalPages }}.
+                        {% elseif selectedCity %}
                             {{ selectedCity.displayName }} – Seite {{ page }} von {{ totalPages }}.
                         {% else %}
                             Alle Spots aus allen Städten – Seite {{ page }} von {{ totalPages }}.
@@ -73,6 +77,11 @@
                                 </div>
                             </div>
                         </article>
+                    {% else %}
+                        <div class="empty-state">
+                            <strong>Keine Einzelattraktion gefunden.</strong>
+                            <p>Probiere einen anderen Spot, eine Kategorie oder eine Stadt.</p>
+                        </div>
                     {% endfor %}
                 </section>
 
@@ -81,6 +90,9 @@
                         {% set prevParams = { page: page - 1, perPage: perPage } %}
                         {% if selectedCity %}
                             {% set prevParams = prevParams|merge({ city: selectedCity.slug }) %}
+                        {% endif %}
+                        {% if searchQuery %}
+                            {% set prevParams = prevParams|merge({ q: searchQuery }) %}
                         {% endif %}
                         <a class="pagination-link" href="{{ path('guide_einzelattraktion', prevParams) }}">‹ Prev</a>
                     {% else %}
@@ -93,6 +105,9 @@
                         {% set nextParams = { page: page + 1, perPage: perPage } %}
                         {% if selectedCity %}
                             {% set nextParams = nextParams|merge({ city: selectedCity.slug }) %}
+                        {% endif %}
+                        {% if searchQuery %}
+                            {% set nextParams = nextParams|merge({ q: searchQuery }) %}
                         {% endif %}
                         <a class="pagination-link" href="{{ path('guide_einzelattraktion', nextParams) }}">Next ›</a>
                     {% else %}

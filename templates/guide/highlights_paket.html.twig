@@ -48,8 +48,17 @@
                 </div>
 
                 {# Re-use the homepage "Jetzt angesagt" cards (rendered by app.js) #}
-                <form class="search-panel home-search-panel is-compact" data-city-search autocomplete="off">
-                    <div class="search-panel-title">Stadt filtern (optional)</div>
+                <form class="search-panel home-search-panel is-compact" data-city-search data-search-mode="spot" autocomplete="off">
+                    <div class="search-panel-title" role="tablist" aria-label="Suchmodus">
+                        <button class="search-tab is-active" type="button" role="tab" aria-selected="true" data-search-tab="spot">
+                            <span>Einzelattraktion</span>
+                            <small>Spots suchen</small>
+                        </button>
+                        <button class="search-tab" type="button" role="tab" aria-selected="false" data-search-tab="city">
+                            <span>City Guides</span>
+                            <small>Städte suchen</small>
+                        </button>
+                    </div>
                     <div class="search-fields">
                         <span class="country-mark" aria-hidden="true">
                             <span></span>
@@ -58,11 +67,15 @@
                         </span>
                         <label>
                             <span class="sr-only">Stadt suchen</span>
-                            <input id="city-input" name="city" type="text" placeholder="Stadt oder Erlebnis suchen" autocomplete="off" spellcheck="false" data-city-input role="combobox" aria-autocomplete="list" aria-controls="city-options" aria-expanded="false">
+                            <span class="search-field-label" data-search-field-label>Attraktion</span>
+                            <input id="city-input" name="q" type="text" placeholder="Attraktion oder Spot suchen" autocomplete="off" spellcheck="false" data-city-input role="combobox" aria-autocomplete="list" aria-controls="city-options" aria-expanded="false">
                         </label>
                         <span class="search-divider" aria-hidden="true"></span>
-                        <span class="search-mode">City Guide</span>
-                        <button type="submit">Suchen</button>
+                        <span class="search-mode">
+                            <span data-search-mode-kicker>Typ</span>
+                            <strong data-search-mode-label>Einzelattraktion</strong>
+                        </span>
+                        <button type="submit"><span>Suchen</span></button>
                     </div>
                     <div class="city-options" id="city-options" data-city-options role="listbox" aria-label="Städte"></div>
                 </form>

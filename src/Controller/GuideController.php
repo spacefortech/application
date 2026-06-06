@@ -49,6 +49,8 @@ class GuideController extends AbstractController
         $page = max(1, (int) $request->query->get('page', 1));
         $perPage = max(6, (int) $request->query->get('perPage', 24));
         $cityQuery = (string) $request->query->get('city', '');
+        $searchQuery = trim((string) $request->query->get('q', ''));
+        $normalizedSearchQuery = $this->normalize($searchQuery);
         $selectedCity = $cityQuery !== '' ? $this->findCity($cityQuery) : null;
 
         $items = array();
@@ -66,6 +68,24 @@ class GuideController extends AbstractController
             $spriteY = $row === 3 ? 100 : $row * 33.3333;
 
             foreach ($spots as $index => $spot) {
+                if ($normalizedSearchQuery !== '') {
+                    $searchText = implode(' ', array(
+                        $city['slug'] ?? '',
+                        $city['name'] ?? '',
+                        $city['displayName'] ?? '',
+                        $city['region'] ?? '',
+                        $spot['type'] ?? '',
+                        $spot['name'] ?? '',
+                        $spot['area'] ?? '',
+                        $spot['note'] ?? '',
+                        $spot['time'] ?? '',
+                    ));
+
+                    if (strpos($this->normalize($searchText), $normalizedSearchQuery) === false) {
+                        continue;
+                    }
+                }
+
                 $items[] = array(
                     'id' => $city['slug'] . '-' . $index,
                     'slug' => $this->normalize($city['slug'] . '-' . ($spot['name'] ?? (string) $index)),
@@ -102,6 +122,7 @@ class GuideController extends AbstractController
             'perPage' => $perPage,
             'totalItems' => $totalItems,
             'totalPages' => $totalPages,
+            'searchQuery' => $searchQuery,
             'selectedCity' => $selectedCity ? array(
                 'slug' => $selectedCity['slug'],
                 'displayName' => $selectedCity['displayName'],
