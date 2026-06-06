@@ -3849,15 +3849,16 @@ body.is-city-search-open .home-page .home-hero {
 .home-experience-card.is-package {
     grid-column: span 4;
     display: flex;
-    min-height: 366px;
+    height: 246px;
     color: #fff;
     background: var(--navy);
+    overflow: hidden;
 }
 
 .home-experience-card.is-package.is-featured {
     grid-column: span 8;
     grid-row: span 2;
-    min-height: 536px;
+    height: 246px;
 }
 
 .home-experience-card.is-spot {
@@ -3902,6 +3903,7 @@ body.is-city-search-open .home-page .home-hero {
     justify-content: flex-end;
     gap: 14px;
     padding: 26px;
+    overflow: hidden;
 }
 
 .home-card-label {
@@ -3923,13 +3925,16 @@ body.is-city-search-open .home-page .home-hero {
 }
 
 .home-experience-card.is-package strong {
-    display: block;
+    display: -webkit-box;
     max-width: 620px;
     color: #fff;
     font-size: 1.72rem;
     font-weight: 900;
     line-height: 1.06;
     text-shadow: 0 12px 32px rgba(0, 0, 0, 0.32);
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
 }
 
 .home-experience-card.is-package.is-featured strong {
@@ -4384,7 +4389,7 @@ body.is-city-search-open .home-page .home-hero {
     .home-experience-card.is-package.is-featured {
         grid-column: span 3;
         grid-row: auto;
-        min-height: 350px;
+        height: 286px;
     }
 
     .home-experience-card.is-spot {
@@ -4603,11 +4608,11 @@ body.is-city-search-open .home-page .home-hero {
     .home-experience-card.is-package.is-featured,
     .home-experience-card.is-spot {
         grid-column: auto;
-        min-height: 0;
+        height: 268px;
     }
 
     .home-experience-card.is-package .home-card-body {
-        min-height: 310px;
+        min-height: 268px;
         padding: 20px;
     }
 
