@@ -1,4 +1,5 @@
 {% extends 'base.html.twig' %}
+{% import 'guide/_cards.html.twig' as cards %}
 
 {% block title %}Tripora - Einzelattraktionen{% endblock %}
 {% block description %}Alle Spots und Einzelattraktionen aus allen Städten – übersichtlich als Karten mit Pagination.{% endblock %}
@@ -36,11 +37,13 @@
                     <h2>Einzelattraktionen</h2>
                     <p>
                         {% if searchQuery and selectedCity %}
-                            Ergebnisse für „{{ searchQuery }}” in {{ selectedCity.displayName }} – Seite {{ page }} von {{ totalPages }}.
+                            Ergebnisse für „{{ searchQuery }}” in {{ selectedCity.cityDisplayLabel }} – Seite {{ page }} von {{ totalPages }}.
                         {% elseif searchQuery %}
                             Ergebnisse für „{{ searchQuery }}” – Seite {{ page }} von {{ totalPages }}.
                         {% elseif selectedCity %}
-                            {{ selectedCity.displayName }} – Seite {{ page }} von {{ totalPages }}.
+                            {{ selectedCity.cityDisplayLabel }} – Seite {{ page }} von {{ totalPages }}.
+                        {% elseif cityNotFound %}
+                            Stadt nicht gefunden – Seite {{ page }} von {{ totalPages }}.
                         {% else %}
                             Alle Spots aus allen Städten – Seite {{ page }} von {{ totalPages }}.
                         {% endif %}
@@ -48,26 +51,8 @@
                 </div>
 
                 <section class="cool-place-grid spot-grid" aria-label="Spots">
-                    {% for item in items %}
-                        <article
-                            class="cool-place-card spot-card {{ page == 1 ? 'has-photo' : 'is-placeholder' }}"
-                            style="--city-accent: {{ item.city.accent }}; --sprite-x: {{ item.city.spriteX|default(0) }}%; --sprite-y: {{ item.city.spriteY|default(0) }}%;" >
-                            <div class="cool-place-photo">
-                            <span class="spot-city-pill">{{ item.city.displayName }}</span>
-                            </div>
-                            <div class="cool-place-card-body">
-                                <div class="cool-place-meta">
-                                    <span>{{ item.spot.type }}</span>
-                                    <span>{{ item.spot.time }}</span>
-                                </div>
-                                <h3>{{ item.spot.name }}</h3>
-                                <p>{{ item.spot.note }}</p>
-                                <div class="cool-place-foot">
-                                    <span>{{ item.spot.area }}</span>
-                                    <small>{{ item.city.region }}</small>
-                                </div>
-                            </div>
-                        </article>
+                    {% for place in items %}
+                        {{ cards.spot_card(place, page) }}
                     {% else %}
                         <div class="empty-state">
                             <strong>Keine Einzelattraktion gefunden.</strong>
@@ -80,7 +65,7 @@
                     {% if page > 1 %}
                         {% set prevParams = { page: page - 1, perPage: perPage } %}
                         {% if selectedCity %}
-                            {% set prevParams = prevParams|merge({ city: selectedCity.slug }) %}
+                            {% set prevParams = prevParams|merge({ city: selectedCity.citySlug }) %}
                         {% endif %}
                         {% if searchQuery %}
                             {% set prevParams = prevParams|merge({ q: searchQuery }) %}
@@ -95,7 +80,7 @@
                     {% if page < totalPages %}
                         {% set nextParams = { page: page + 1, perPage: perPage } %}
                         {% if selectedCity %}
-                            {% set nextParams = nextParams|merge({ city: selectedCity.slug }) %}
+                            {% set nextParams = nextParams|merge({ city: selectedCity.citySlug }) %}
                         {% endif %}
                         {% if searchQuery %}
                             {% set nextParams = nextParams|merge({ q: searchQuery }) %}

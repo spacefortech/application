@@ -49,20 +49,61 @@ class PlaceRepository extends ServiceEntityRepository
     }
 
     /**
+     * @return array<int, array{city: Place, spots: array<int, Place>}>
+     */
+    public function findCitySpotGroups(): array
+    {
+        $groups = array();
+
+        foreach ($this->findCitySpotPlaces(null) as $place) {
+            $citySlug = (string) $place->getCitySlug();
+
+            if (!isset($groups[$citySlug])) {
+                $groups[$citySlug] = array(
+                    'city' => $place,
+                    'spots' => array(),
+                );
+            }
+
+            $groups[$citySlug]['spots'][] = $place;
+        }
+
+        return array_values($groups);
+    }
+
+    public function findCityRepresentative(string $value): ?Place
+    {
+        $normalizedValue = $this->normalize($value);
+
+        if ($normalizedValue === '') {
+            return null;
+        }
+
+        foreach ($this->findCitySpotGroups() as $group) {
+            /** @var Place $city */
+            $city = $group['city'];
+            $names = array_merge(
+                array($city->getCitySlug(), $city->getCityName(), $city->getCityDisplayName()),
+                $city->getCityAliases() ?? array()
+            );
+
+            foreach ($names as $name) {
+                if ($this->normalize((string) $name) === $normalizedValue) {
+                    return $city;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * @return array<string, mixed>
      */
     public function findCoolPlacesData(string $citySlug): array
     {
         $city = $this->findCityData($citySlug);
-        $places = $this->createQueryBuilder('p')
-            ->andWhere('p.citySlug = :citySlug')
-            ->andWhere('p.coolPlace = :coolPlace')
-            ->setParameter('citySlug', $city ? $city['slug'] : $citySlug)
-            ->setParameter('coolPlace', true)
-            ->orderBy('p.coolPlaceOrder', 'ASC')
-            ->addOrderBy('p.id', 'ASC')
-            ->getQuery()
-            ->getResult();
+        $places = $this->findCoolPlaces($city ? $city['slug'] : $citySlug);
 
         $firstPlace = isset($places[0]) ? $places[0] : null;
 
@@ -94,6 +135,22 @@ class PlaceRepository extends ServiceEntityRepository
     }
 
     /**
+     * @return Place[]
+     */
+    public function findCoolPlaces(string $citySlug): array
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.citySlug = :citySlug')
+            ->andWhere('p.coolPlace = :coolPlace')
+            ->setParameter('citySlug', $citySlug)
+            ->setParameter('coolPlace', true)
+            ->orderBy('p.coolPlaceOrder', 'ASC')
+            ->addOrderBy('p.id', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
      * @return array<int, array<string, mixed>>
      */
     public function findAttractionItems(?string $citySlug, string $searchQuery): array
@@ -102,19 +159,7 @@ class PlaceRepository extends ServiceEntityRepository
         $items = array();
 
         foreach ($this->findCitySpotPlaces($citySlug) as $place) {
-            $searchText = implode(' ', array(
-                $place->getCitySlug() ?? '',
-                $place->getCityName() ?? '',
-                $place->getCityDisplayName() ?? '',
-                $place->getCityRegion() ?? '',
-                $place->getType() ?? '',
-                $place->getName() ?? '',
-                $place->getArea() ?? '',
-                $place->getNote() ?? '',
-                $place->getTime() ?? '',
-            ));
-
-            if ($normalizedSearchQuery !== '' && strpos($this->normalize($searchText), $normalizedSearchQuery) === false) {
+            if ($normalizedSearchQuery !== '' && strpos($this->normalize($place->getSearchText()), $normalizedSearchQuery) === false) {
                 continue;
             }
 
@@ -141,7 +186,26 @@ class PlaceRepository extends ServiceEntityRepository
     /**
      * @return Place[]
      */
-    private function findCitySpotPlaces(?string $citySlug): array
+    public function findAttractionPlaces(?string $citySlug, string $searchQuery): array
+    {
+        $normalizedSearchQuery = $this->normalize($searchQuery);
+        $items = array();
+
+        foreach ($this->findCitySpotPlaces($citySlug) as $place) {
+            if ($normalizedSearchQuery !== '' && strpos($this->normalize($place->getSearchText()), $normalizedSearchQuery) === false) {
+                continue;
+            }
+
+            $items[] = $place;
+        }
+
+        return $items;
+    }
+
+    /**
+     * @return Place[]
+     */
+    public function findCitySpotPlaces(?string $citySlug = null): array
     {
         $queryBuilder = $this->createQueryBuilder('p')
             ->andWhere('p.citySpot = :citySpot')

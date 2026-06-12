@@ -17,17 +17,57 @@ class GuideController extends AbstractController
         $this->places = $places;
     }
 
-    public function index(): Response
+    public function index(Request $request): Response
     {
+        $cityGroups = $this->places->findCitySpotGroups();
+        $cityQuery = trim((string) $request->query->get('city', ''));
+        $selectedCity = $cityQuery !== '' ? $this->places->findCityRepresentative($cityQuery) : null;
+        $selectedGroup = $selectedCity ? $this->findCityGroup($cityGroups, (string) $selectedCity->getCitySlug()) : null;
+        $spotPlaces = $selectedCity
+            ? $this->places->findCitySpotPlaces($selectedCity->getCitySlug())
+            : $this->places->findCitySpotPlaces(null);
+
         return $this->render('guide/index.html.twig', array(
-            'citiesJson' => $this->encodeJson($this->places->findCitiesData()),
+            'cityGroups' => $cityGroups,
+            'visibleCityGroups' => array_slice($cityGroups, 0, 8),
+            'packageGroups' => $selectedGroup ? array($selectedGroup) : array_slice($cityGroups, 0, 8),
+            'spotPlaces' => array_slice($spotPlaces, 0, $selectedCity ? 9 : 12),
+            'selectedCity' => $selectedCity,
+            'citySearchQuery' => $cityQuery,
+            'cityNotFound' => $cityQuery !== '' && !$selectedCity,
         ));
     }
 
-    public function coolPlaces(): Response
+    public function coolPlaces(Request $request): Response
     {
+        $cityQuery = trim((string) $request->query->get('city', 'duisburg'));
+        $city = $this->places->findCityRepresentative($cityQuery ?: 'duisburg');
+        $citySlug = $city ? (string) $city->getCitySlug() : ($cityQuery ?: 'duisburg');
+        $places = $this->places->findCoolPlaces($citySlug);
+        $selectedPlace = isset($places[0]) ? $places[0] : null;
+        $placeQuery = trim((string) $request->query->get('place', ''));
+
+        foreach ($places as $place) {
+            if ($place->getSlug() === $placeQuery) {
+                $selectedPlace = $place;
+                break;
+            }
+        }
+
+        $photos = $selectedPlace ? ($selectedPlace->getPhotos() ?? array()) : array();
+        $photoIndex = max(0, (int) $request->query->get('photo', 0));
+
+        if ($photos) {
+            $photoIndex = min($photoIndex, count($photos) - 1);
+        } else {
+            $photoIndex = 0;
+        }
+
         return $this->render('guide/cool_places.html.twig', array(
-            'coolPlacesJson' => $this->encodeJson($this->places->findCoolPlacesData('duisburg')),
+            'city' => $city ?: $selectedPlace,
+            'places' => $places,
+            'selectedPlace' => $selectedPlace,
+            'activePhotoIndex' => $photoIndex,
         ));
     }
 
@@ -56,9 +96,9 @@ class GuideController extends AbstractController
         $perPage = max(6, (int) $request->query->get('perPage', 24));
         $cityQuery = (string) $request->query->get('city', '');
         $searchQuery = trim((string) $request->query->get('q', ''));
-        $selectedCity = $cityQuery !== '' ? $this->places->findCityData($cityQuery) : null;
-        $items = $this->places->findAttractionItems(
-            $selectedCity ? $selectedCity['slug'] : null,
+        $selectedCity = $cityQuery !== '' ? $this->places->findCityRepresentative($cityQuery) : null;
+        $items = $this->places->findAttractionPlaces(
+            $selectedCity ? $selectedCity->getCitySlug() : null,
             $searchQuery
         );
 
@@ -77,24 +117,35 @@ class GuideController extends AbstractController
             'totalItems' => $totalItems,
             'totalPages' => $totalPages,
             'searchQuery' => $searchQuery,
-            'selectedCity' => $selectedCity ? array(
-                'slug' => $selectedCity['slug'],
-                'displayName' => $selectedCity['displayName'],
-            ) : null,
+            'selectedCity' => $selectedCity,
+            'cityQuery' => $cityQuery,
+            'cityNotFound' => $cityQuery !== '' && !$selectedCity,
         ));
     }
 
-    public function highlightsPaket(): Response
+    public function highlightsPaket(Request $request): Response
     {
+        $cityGroups = $this->places->findCitySpotGroups();
+        $cityQuery = trim((string) $request->query->get('city', ''));
+        $selectedCity = $cityQuery !== '' ? $this->places->findCityRepresentative($cityQuery) : null;
+
         return $this->render('guide/highlights_paket.html.twig', array(
-            'citiesJson' => $this->encodeJson($this->places->findCitiesData()),
+            'cityGroups' => $cityGroups,
+            'visibleCityGroups' => array_slice($cityGroups, 0, 8),
+            'selectedCity' => $selectedCity,
+            'citySearchQuery' => $cityQuery,
+            'cityNotFound' => $cityQuery !== '' && !$selectedCity,
         ));
     }
 
-    private function encodeJson(array $data): string
+    private function findCityGroup(array $cityGroups, string $citySlug): ?array
     {
-        $json = json_encode($data, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+        foreach ($cityGroups as $group) {
+            if ($group['city']->getCitySlug() === $citySlug) {
+                return $group;
+            }
+        }
 
-        return $json === false ? '{}' : $json;
+        return null;
     }
 }

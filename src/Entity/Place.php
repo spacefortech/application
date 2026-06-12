@@ -578,4 +578,139 @@ class Place
 
         return $this;
     }
+
+    public function getCityDisplayLabel(): string
+    {
+        return $this->cityDisplayName ?: ($this->cityName ?: (string) $this->citySlug);
+    }
+
+    public function getCityAccentValue(): string
+    {
+        $accent = $this->cityAccent ?: '#0b0c3f';
+
+        if (!preg_match('/^#[0-9a-fA-F]{3,8}$/', $accent)) {
+            return '#0b0c3f';
+        }
+
+        return $accent;
+    }
+
+    public function getCitySpriteX(): float
+    {
+        $column = ($this->cityImageIndex ?? 0) % 4;
+
+        return $column === 3 ? 100.0 : $column * 33.3333;
+    }
+
+    public function getCitySpriteY(): float
+    {
+        $row = (int) floor(($this->cityImageIndex ?? 0) / 4);
+
+        return $row === 3 ? 100.0 : $row * 33.3333;
+    }
+
+    public function getCitySpriteStyle(): string
+    {
+        return sprintf(
+            '--sprite-x: %s%%; --sprite-y: %s%%; --city-accent: %s;',
+            $this->formatCssNumber($this->getCitySpriteX()),
+            $this->formatCssNumber($this->getCitySpriteY()),
+            $this->getCityAccentValue()
+        );
+    }
+
+    public function getCityTeaser(): string
+    {
+        if ($this->citySummary) {
+            return $this->citySummary;
+        }
+
+        if ($this->cityHeadline) {
+            return $this->cityHeadline;
+        }
+
+        return $this->cityBestFor ?: '';
+    }
+
+    public function getCityCardCopy(): string
+    {
+        if ($this->cityHeadline) {
+            return $this->cityHeadline;
+        }
+
+        if ($this->cityBestFor) {
+            return $this->cityBestFor;
+        }
+
+        return $this->citySummary ?: '';
+    }
+
+    public function getCityPackageTitle(): string
+    {
+        return $this->getCityDisplayLabel() . ' Highlights-Paket';
+    }
+
+    public function getSearchText(): string
+    {
+        return implode(' ', array(
+            $this->citySlug ?? '',
+            $this->cityName ?? '',
+            $this->cityDisplayName ?? '',
+            $this->cityRegion ?? '',
+            $this->type ?? '',
+            $this->name ?? '',
+            $this->area ?? '',
+            $this->note ?? '',
+            $this->time ?? '',
+        ));
+    }
+
+    public function getPrimaryPhoto(): ?array
+    {
+        $photos = $this->photos ?? array();
+
+        return isset($photos[0]) && is_array($photos[0]) ? $photos[0] : null;
+    }
+
+    public function getPrimaryPhotoVisualClass(): string
+    {
+        return $this->getPhotoVisualClass($this->getPrimaryPhoto());
+    }
+
+    public function getPhotoVisualClass(?array $photo = null): string
+    {
+        $visual = isset($photo['visual']) ? (string) $photo['visual'] : 'city';
+        $visual = strtolower($visual);
+        $visual = preg_replace('/[^a-z0-9-]+/', '-', $visual);
+        $visual = trim((string) $visual, '-');
+
+        return 'cool-photo-' . ($visual ?: 'city');
+    }
+
+    public function getPrimaryPhotoLabel(): string
+    {
+        $photo = $this->getPrimaryPhoto();
+
+        if ($photo && isset($photo['label'])) {
+            return (string) $photo['label'];
+        }
+
+        return $this->type ?: 'Highlight';
+    }
+
+    public function getPrimaryPhotoCaption(): string
+    {
+        $photo = $this->getPrimaryPhoto();
+
+        if ($photo && isset($photo['caption'])) {
+            return (string) $photo['caption'];
+        }
+
+        return $this->intro ?: '';
+    }
+
+    private function formatCssNumber(float $value): string
+    {
+        return rtrim(rtrim(sprintf('%.4F', $value), '0'), '.');
+    }
 }

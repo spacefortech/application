@@ -1,9 +1,14 @@
 {% extends 'base.html.twig' %}
+{% import 'guide/_cards.html.twig' as cards %}
 
 {% block title %}Tripora - Erlebnisse, Ausflüge und City Guides{% endblock %}
 {% block description %}Finde kuratierte City Guides, Ausflüge und Reiseideen für inspirierende Wochenenden in Deutschland.{% endblock %}
 
 {% block body %}
+    {% set activeSlug = selectedCity ? selectedCity.citySlug : '' %}
+    {% set packagesHref = selectedCity ? path('guide_highlights_paket', { city: selectedCity.citySlug }) : path('guide_highlights_paket') %}
+    {% set spotsHref = selectedCity ? path('guide_einzelattraktion', { city: selectedCity.citySlug }) : path('guide_einzelattraktion') %}
+
     <div class="home-page">
         <header class="site-header home-header">
             <div class="nav-inner" aria-label="Hauptnavigation">
@@ -34,11 +39,9 @@
             <section class="hero home-hero" aria-labelledby="hero-title">
                 <div class="hero-card">
                     <div class="hero-content">
-                       {#  <span class="hero-kicker">Finde deine nächste Erfahrung</span> #}
                         <h1 id="hero-title">Erlebnisse, Ausflüge und City Guides</h1>
-{#                        <p>Buche deinen nächsten Städtetrip mit kuratierten Orten, Routen und lokalen Highlights.</p>#}
 
-                        <form class="search-panel home-search-panel" data-city-search data-search-mode="spot" autocomplete="off">
+                        <form class="search-panel home-search-panel" action="{{ path('guide_einzelattraktion') }}" method="get" data-city-search data-search-mode="spot" autocomplete="off">
                             <div class="search-panel-title" role="tablist" aria-label="Suchmodus">
                                 <button class="search-tab is-active" type="button" role="tab" aria-selected="true" data-search-tab="spot">
                                     <span>Einzelattraktion</span>
@@ -58,13 +61,12 @@
                                 <label>
                                     <span class="sr-only">Stadt suchen</span>
                                     <span class="search-field-label" data-search-field-label>Attraktion</span>
-                                    <input id="city-input" name="q" type="text" placeholder="Attraktion oder Spot suchen" autocomplete="off" spellcheck="false" data-city-input role="combobox" aria-autocomplete="list" aria-controls="city-options" aria-expanded="false">
+                                    <input id="city-input" name="q" type="text" placeholder="Attraktion oder Spot suchen" autocomplete="off" spellcheck="false" data-city-input>
                                 </label>
                                 <button type="submit"><span>Suchen</span></button>
                             </div>
-                            <div class="city-options" id="city-options" data-city-options role="listbox" aria-label="Städte"></div>
+                            <div class="city-options" id="city-options" data-city-options aria-hidden="true"></div>
                         </form>
-
                     </div>
                 </div>
             </section>
@@ -74,10 +76,97 @@
                     <h2 id="cities-title">Urlaubsregionen entdecken</h2>
                     <p>Stadt, Wasser, Kultur und Wochenendgefühl – wähle den Vibe, der zu deiner nächsten Reise passt.</p>
                 </div>
-                <section class="city-strip" id="cities" aria-label="Wichtigste Städte" data-city-strip></section>
+
+                <section class="city-strip" id="cities" aria-label="Wichtigste Städte">
+                    {% for group in visibleCityGroups %}
+                        {% set city = group.city %}
+                        {% set href = city.citySlug == 'duisburg' ? path('guide_cool_places', { city: city.citySlug }) : path('guide_home', { city: city.citySlug }) ~ '#places' %}
+                        <a
+                            class="city-card{{ city.citySlug == activeSlug ? ' is-active' : '' }}{{ loop.index0 in [0, 5, 12] ? ' is-featured' : '' }}"
+                            href="{{ href }}"
+                            data-city-card
+                            data-city-slug="{{ city.citySlug }}"
+                            style="{{ city.citySpriteStyle }}"
+                        >
+                            <span class="city-tile-media" aria-hidden="true"></span>
+                            <span class="city-tile-content">
+                                <span class="city-tile-kicker">Urlaubsregion</span>
+                                <strong>{{ city.cityDisplayLabel }}</strong>
+                                <span class="city-tile-meta">{{ city.cityRegion }}{% if group.spots|length %} · {{ group.spots|length }} Spots{% endif %}</span>
+                                <span class="city-tile-copy">{{ city.cityCardCopy }}</span>
+                                <span class="city-tile-tags">
+                                    {% if city.cityDuration %}
+                                        <span>{{ city.cityDuration }}</span>
+                                    {% endif %}
+                                    {% if city.cityNeighborhoods|default([])|length %}
+                                        <span>{{ city.cityNeighborhoods|first }}</span>
+                                    {% endif %}
+                                </span>
+                            </span>
+                        </a>
+                    {% endfor %}
+                </section>
 
                 <section class="results-shell" id="places" aria-live="polite">
-                    <div data-city-result></div>
+                    <div class="section-heading">
+                        <h2>
+                            {% if cityNotFound %}
+                                Stadt nicht gefunden
+                            {% elseif selectedCity %}
+                                {{ selectedCity.cityDisplayLabel }} als Kurztrip
+                            {% else %}
+                                Dein Kurztrip-Mix
+                            {% endif %}
+                        </h2>
+                        <p>
+                            {% if cityNotFound %}
+                                Versuche Berlin, Hamburg, München, Köln, Frankfurt, Dresden, Leipzig, Stuttgart, Nürnberg, Heidelberg, Bremen, Düsseldorf, Duisburg, Bonn, Münster, Rostock, Aachen, Trier, Lübeck oder Freiburg.
+                            {% elseif selectedCity %}
+                                Starte mit einem Highlights-Paket und ergänze es mit passenden Einzelattraktionen.
+                            {% else %}
+                                Highlights-Pakete für den ganzen Tag – plus Einzelattraktionen für spontane Stopps.
+                            {% endif %}
+                        </p>
+                    </div>
+
+                    {% if cityNotFound %}
+                        <div class="empty-state">
+                            <strong>Keine passende Stadt gefunden.</strong>
+                            <p>Wähle eine der kuratierten Städte unten oder suche nach einer anderen Schreibweise.</p>
+                        </div>
+                    {% endif %}
+
+                    <div class="home-results">
+                        <section class="home-results-section is-packages" aria-label="Highlights-Pakete">
+                            <header class="home-results-section-header">
+                                <div class="home-results-section-title">
+                                    <h3>Highlights-Paket</h3>
+                                    <p>Ein kompletter Tagesplan als Paket – ideal als Basis für deinen Trip.</p>
+                                </div>
+                                <a class="home-results-link" href="{{ packagesHref }}">Alle Pakete</a>
+                            </header>
+                            <div class="home-package-grid">
+                                {% for group in packageGroups %}
+                                    {{ cards.home_package_card(group, activeSlug) }}
+                                {% endfor %}
+                            </div>
+                        </section>
+
+                        <section class="home-results-section is-spots" aria-label="Einzelattraktionen">
+                            <header class="home-results-section-header">
+                                <div class="home-results-section-title">
+                                    <h3>Einzelattraktionen</h3>
+                                    <p>Einzelne Orte, die du spontan hinzufügen kannst – kurz, klar, direkt umsetzbar.</p>
+                                </div>
+                                <a class="home-results-link" href="{{ spotsHref }}">Alle Spots</a>
+                            </header>
+                            <div class="home-spots-grid">
+                                {% for place in spotPlaces %}
+                                    {{ cards.home_spot_card(place, activeSlug) }}
+                                {% endfor %}
+                            </div>
+                        </section>
+                    </div>
                 </section>
             </section>
 
@@ -126,6 +215,4 @@
 
         {% include 'partials/_footer.html.twig' %}
     </div>
-
-    <script>window.CITY_GUIDE_DATA = {{ citiesJson|raw }};</script>
 {% endblock %}

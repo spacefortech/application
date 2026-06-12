@@ -1,9 +1,12 @@
 {% extends 'base.html.twig' %}
+{% import 'guide/_cards.html.twig' as cards %}
 
 {% block title %}Tripora - Highlights-Paket{% endblock %}
 {% block description %}Highlights-Paket – kuratierte Pakete pro Stadt (coming soon).{% endblock %}
 
 {% block body %}
+    {% set activeSlug = selectedCity ? selectedCity.citySlug : '' %}
+
     <div class="places-page highlights-page">
         <header class="site-header">
             <div class="nav-inner" aria-label="Hauptnavigation">
@@ -37,8 +40,15 @@
                     <p>Kuratierte Pakete im gleichen Kartenlayout wie die Einzelattraktionen.</p>
                 </div>
 
-                {# Cards are rendered by app.js using the same visual structure as Einzelattraktionen. #}
-                <form class="search-panel home-search-panel is-compact" data-city-search data-search-mode="spot" autocomplete="off">
+                <form
+                    class="search-panel home-search-panel is-compact"
+                    action="{{ path('guide_einzelattraktion') }}"
+                    method="get"
+                    data-city-search
+                    data-search-mode="spot"
+                    data-city-action="{{ path('guide_highlights_paket') }}"
+                    autocomplete="off"
+                >
                     <div class="search-panel-title" role="tablist" aria-label="Suchmodus">
                         <button class="search-tab is-active" type="button" role="tab" aria-selected="true" data-search-tab="spot">
                             <span>Einzelattraktion</span>
@@ -58,28 +68,45 @@
                         <label>
                             <span class="sr-only">Stadt suchen</span>
                             <span class="search-field-label" data-search-field-label>Attraktion</span>
-                            <input id="city-input" name="q" type="text" placeholder="Attraktion oder Spot suchen" autocomplete="off" spellcheck="false" data-city-input role="combobox" aria-autocomplete="list" aria-controls="city-options" aria-expanded="false">
+                            <input id="city-input" name="q" type="text" placeholder="Attraktion oder Spot suchen" autocomplete="off" spellcheck="false" data-city-input>
                         </label>
                         <button type="submit"><span>Suchen</span></button>
                     </div>
-                    <div class="city-options" id="city-options" data-city-options role="listbox" aria-label="Städte"></div>
+                    <div class="city-options" id="city-options" data-city-options aria-hidden="true"></div>
                 </form>
 
-                <section class="city-strip" aria-label="Wichtigste Städte" data-city-strip></section>
+                <section class="city-strip" aria-label="Wichtigste Städte">
+                    {% for group in visibleCityGroups %}
+                        {% set city = group.city %}
+                        <a
+                            class="city-card{{ city.citySlug == activeSlug ? ' is-active' : '' }}"
+                            href="{{ path('guide_highlights_paket', { city: city.citySlug }) }}#places"
+                            data-city-card
+                            data-city-slug="{{ city.citySlug }}"
+                        >
+                            <strong>{{ city.cityDisplayLabel }}</strong>
+                            <span>{{ city.cityRegion }}</span>
+                        </a>
+                    {% endfor %}
+                </section>
 
                 <section class="results-shell" id="places" aria-live="polite">
-                    {# I seguenti nodi servono a app.js, ma nella pagina Highlights devono restare nascosti #}
-                    <div class="section-heading highlights-results-heading" aria-hidden="true">
-                        <h2 data-results-heading></h2>
-                        <p data-results-copy></p>
-                    </div>
-                    <div data-city-result></div>
+                    {% if cityNotFound %}
+                        <div class="empty-state">
+                            <strong>Keine passende Stadt gefunden.</strong>
+                            <p>Wähle eine der kuratierten Städte oder suche nach einer anderen Schreibweise.</p>
+                        </div>
+                    {% endif %}
+
+                    <section class="cool-place-grid spot-grid highlight-package-grid" aria-label="Highlights-Pakete">
+                        {% for group in cityGroups|slice(0, 20) %}
+                            {{ cards.highlight_package_card(group, activeSlug) }}
+                        {% endfor %}
+                    </section>
                 </section>
             </section>
         </main>
 
         {% include 'partials/_footer.html.twig' %}
     </div>
-
-    <script>window.CITY_GUIDE_DATA = {{ citiesJson|raw }};</script>
 {% endblock %}

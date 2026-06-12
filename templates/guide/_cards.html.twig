@@ -1,0 +1,112 @@
+{% macro home_package_card(group, activeSlug) %}
+    {% set city = group.city %}
+    {% set spotsCount = group.spots|length %}
+    <a
+        class="home-experience-card is-package{{ city.citySlug == activeSlug ? ' is-active' : '' }}"
+        href="{{ path('guide_highlights_paket', { city: city.citySlug }) }}"
+        data-home-experience-card
+        data-city-slug="{{ city.citySlug }}"
+        aria-label="{{ city.cityPackageTitle }} ansehen"
+        style="{{ city.citySpriteStyle }}"
+    >
+        <span class="home-card-media" aria-hidden="true"></span>
+        <span class="home-card-body">
+            <span class="home-card-label">Highlights-Paket</span>
+            <strong>{{ city.cityPackageTitle }}</strong>
+            <span class="home-card-copy">{{ city.cityTeaser }}</span>
+            <span class="home-card-details">
+                <span>{{ city.cityDuration ?: 'Wochenende' }}</span>
+                {% if spotsCount %}
+                    <span>{{ spotsCount }} Stopps</span>
+                {% endif %}
+                {% if city.cityRegion %}
+                    <span>{{ city.cityRegion }}</span>
+                {% endif %}
+            </span>
+            <span class="home-card-action">Zum Paket</span>
+        </span>
+    </a>
+{% endmacro %}
+
+{% macro home_spot_card(place, activeSlug) %}
+    <a
+        class="home-experience-card is-spot{{ place.citySlug == activeSlug ? ' is-active' : '' }}"
+        href="{{ path('guide_einzelattraktion', { city: place.citySlug, q: place.name }) }}"
+        data-home-experience-card
+        data-city-slug="{{ place.citySlug }}"
+        aria-label="{{ place.name }} ansehen"
+        style="{{ place.citySpriteStyle }}"
+    >
+        <span class="home-spot-media">
+            <span class="home-spot-thumb" aria-hidden="true"></span>
+            <span class="home-spot-overlay">
+                <span class="home-card-label">Einzelattraktion</span>
+                <span class="home-spot-city">{{ place.cityDisplayLabel }}{% if place.area %} · {{ place.area }}{% endif %}</span>
+            </span>
+        </span>
+        <span class="home-card-body">
+            <strong>{{ place.name }}</strong>
+            <span class="home-card-copy">{{ place.note ?: place.cityTeaser }}</span>
+            <span class="home-card-details">
+                {% if place.type %}
+                    <span>{{ place.type }}</span>
+                {% endif %}
+                {% if place.time %}
+                    <span>{{ place.time }}</span>
+                {% endif %}
+            </span>
+            <span class="home-card-action">Spot ansehen</span>
+        </span>
+    </a>
+{% endmacro %}
+
+{% macro highlight_package_card(group, activeSlug) %}
+    {% set city = group.city %}
+    {% set spotsCount = group.spots|length %}
+    <a
+        class="cool-place-card spot-card highlight-package-card has-photo{{ city.citySlug == activeSlug ? ' is-active' : '' }}"
+        href="{{ path('guide_highlights_paket', { city: city.citySlug }) }}"
+        data-city-slug="{{ city.citySlug }}"
+        aria-label="{{ city.cityPackageTitle }} ansehen"
+        style="{{ city.citySpriteStyle }}"
+    >
+        <div class="cool-place-photo">
+            <span class="spot-city-pill">{{ city.cityDisplayLabel }}</span>
+        </div>
+        <div class="cool-place-card-body">
+            <div class="cool-place-meta">
+                <span>Highlights-Paket</span>
+                <span>{{ spotsCount ? spotsCount ~ ' Stopps' : (city.cityDuration ?: 'Wochenende') }}</span>
+            </div>
+            <h3>{{ city.cityPackageTitle }}</h3>
+            <p>{{ city.cityTeaser ?: 'Kuratierte Stopps, klare Reihenfolge und starke Orte für deinen Trip.' }}</p>
+            <div class="cool-place-foot">
+                <span>{{ city.cityDuration ?: 'Wochenende' }}</span>
+                <small>{{ city.cityRegion ?: 'Kuratierte Route' }}</small>
+            </div>
+        </div>
+    </a>
+{% endmacro %}
+
+{% macro spot_card(place, page) %}
+    <article
+        class="cool-place-card spot-card {{ page == 1 ? 'has-photo' : 'is-placeholder' }}"
+        style="{{ place.citySpriteStyle }}"
+    >
+        <div class="cool-place-photo">
+            <span class="spot-city-pill">{{ place.cityDisplayLabel }}</span>
+        </div>
+        <div class="cool-place-card-body">
+            <div class="cool-place-meta">
+                <span>{{ place.type }}</span>
+                <span>{{ place.time }}</span>
+            </div>
+            <h3>{{ place.name }}</h3>
+            <p>{{ place.note }}</p>
+            <div class="cool-place-foot">
+                <span>{{ place.area }}</span>
+                <small>{{ place.cityRegion }}</small>
+            </div>
+        </div>
+    </article>
+{% endmacro %}

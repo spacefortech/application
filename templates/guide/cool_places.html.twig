@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Tripora - Cool Places in Duisburg{% endblock %}
+{% block title %}Tripora - Cool Places in {{ city ? city.cityDisplayLabel : 'Duisburg' }}{% endblock %}
 {% block description %}Cool Places in Duisburg: Orte, Fotos, Infos und Feedbacks für ausgewählte Highlights der Stadt.{% endblock %}
 
 {% block body %}
@@ -22,7 +22,7 @@
                     <a href="/api/cities">API</a>
                 </nav>
                 <div class="nav-actions" aria-label="Schnellzugriff">
-                    <a class="nav-action is-filled" href="#place-cards">Duisburg</a>
+                    <a class="nav-action is-filled" href="#place-cards">{{ city ? city.cityDisplayLabel : 'Duisburg' }}</a>
                     <a class="nav-action is-outline has-icon" href="/">
                         <span class="nav-login-icon" aria-hidden="true"></span>
                         <span>Anmelden</span>
@@ -37,36 +37,165 @@
                     <div class="hero-label">
                         <span class="hero-kicker">City Guide</span>
                         <span class="hero-divider"></span>
-                        <span class="hero-city">Duisburg</span>
+                        <span class="hero-city">{{ city ? city.cityDisplayLabel : 'Duisburg' }}</span>
                     </div>
                     <h1 id="place-hero-title">Entdecke die verborgenen <br>Seiten der Stadt.</h1>
                 </div>
             </section>
 
             <div class="place-detail-container">
-                <section class="place-selection">
+                <section class="place-selection" id="place-cards">
                     <div class="selection-header">
                         <h2>Must-see Orte</h2>
                         <p>Wähle einen Ort aus, um Details zu sehen</p>
                     </div>
-                    <div class="place-card-rail" data-place-cards></div>
+                    <div class="place-card-rail">
+                        {% for place in places %}
+                            <a
+                                class="duisburg-place-card{{ selectedPlace and place.slug == selectedPlace.slug ? ' is-active' : '' }}"
+                                href="{{ path('guide_cool_places', { city: place.citySlug, place: place.slug }) }}#place-detail"
+                            >
+                                <span class="duisburg-place-thumb {{ place.primaryPhotoVisualClass }}" aria-hidden="true"></span>
+                                <span class="duisburg-place-copy">
+                                    <small>{{ '%02d'|format(loop.index) }} / {{ place.type }}</small>
+                                    <strong>{{ place.name }}</strong>
+                                    <em>{{ place.area }}</em>
+                                </span>
+                            </a>
+                        {% else %}
+                            <div class="empty-state">
+                                <strong>Keine Orte gefunden.</strong>
+                                <p>Für diese Stadt sind noch keine Cool Places gepflegt.</p>
+                            </div>
+                        {% endfor %}
+                    </div>
                 </section>
 
-                <div class="place-main-content">
-                    <div class="content-left">
-                        <div id="place-gallery" class="place-gallery-section" data-place-carousel></div>
-                    </div>
-                    <div class="content-right">
-                        <div class="place-info-section" data-place-info></div>
-                    </div>
-                </div>
+                {% if selectedPlace %}
+                    {% set photos = selectedPlace.photos|default([]) %}
+                    {% set activePhoto = photos[activePhotoIndex]|default(selectedPlace.primaryPhoto) %}
 
-                <section id="place-feedback" class="place-feedback-section" data-place-feedback></section>
+                    <div class="place-main-content" id="place-detail">
+                        <div class="content-left">
+                            <div id="place-gallery" class="place-gallery-section">
+                                <section class="place-carousel" aria-label="Fotos von {{ selectedPlace.name }}">
+                                    <div class="place-carousel-main {{ selectedPlace.photoVisualClass(activePhoto) }}">
+                                        {% if photos|length > 1 %}
+                                            {% set prevPhotoIndex = activePhotoIndex == 0 ? photos|length - 1 : activePhotoIndex - 1 %}
+                                            {% set nextPhotoIndex = activePhotoIndex == photos|length - 1 ? 0 : activePhotoIndex + 1 %}
+                                            <a class="carousel-arrow is-prev" href="{{ path('guide_cool_places', { city: selectedPlace.citySlug, place: selectedPlace.slug, photo: prevPhotoIndex }) }}#place-gallery" aria-label="Vorheriges Foto">‹</a>
+                                            <a class="carousel-arrow is-next" href="{{ path('guide_cool_places', { city: selectedPlace.citySlug, place: selectedPlace.slug, photo: nextPhotoIndex }) }}#place-gallery" aria-label="Nächstes Foto">›</a>
+                                        {% endif %}
+
+                                        <div class="place-carousel-caption">
+                                            <span>{{ activePhoto.label|default(selectedPlace.primaryPhotoLabel) }}</span>
+                                            <strong>{{ selectedPlace.name }}</strong>
+                                            <p>{{ activePhoto.caption|default(selectedPlace.primaryPhotoCaption) }}</p>
+                                        </div>
+                                    </div>
+
+                                    {% if photos|length %}
+                                        <div class="place-carousel-thumbs" aria-label="Fotoauswahl">
+                                            {% for photo in photos %}
+                                                <a
+                                                    class="place-carousel-thumb {{ selectedPlace.photoVisualClass(photo) }}{{ loop.index0 == activePhotoIndex ? ' is-active' : '' }}"
+                                                    href="{{ path('guide_cool_places', { city: selectedPlace.citySlug, place: selectedPlace.slug, photo: loop.index0 }) }}#place-gallery"
+                                                >
+                                                    <span>{{ photo.label|default('Foto') }}</span>
+                                                </a>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </section>
+                            </div>
+                        </div>
+
+                        <div class="content-right">
+                            <div class="place-info-section">
+                                <section class="place-info-panel" aria-labelledby="place-info-title">
+                                    <div class="place-info-copy">
+                                        <span class="section-kicker">{{ selectedPlace.type }}</span>
+                                        <h2 id="place-info-title">{{ selectedPlace.name }}</h2>
+                                        {% if selectedPlace.intro %}
+                                            <p>{{ selectedPlace.intro }}</p>
+                                        {% endif %}
+                                        {% if selectedPlace.why %}
+                                            <p>{{ selectedPlace.why }}</p>
+                                        {% endif %}
+                                        {% if selectedPlace.tip %}
+                                            <div class="place-tip">
+                                                <strong>Tipp</strong>
+                                                <span>{{ selectedPlace.tip }}</span>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    <dl class="place-facts">
+                                        {% for fact in selectedPlace.facts|default([]) %}
+                                            <div>
+                                                <dt>{{ fact.label }}</dt>
+                                                <dd>{{ fact.value }}</dd>
+                                            </div>
+                                        {% endfor %}
+                                        {% if selectedPlace.area %}
+                                            <div>
+                                                <dt>Stadtteil</dt>
+                                                <dd>{{ selectedPlace.area }}</dd>
+                                            </div>
+                                        {% endif %}
+                                        {% if selectedPlace.address %}
+                                            <div>
+                                                <dt>Adresse</dt>
+                                                <dd>{{ selectedPlace.address }}</dd>
+                                            </div>
+                                        {% endif %}
+                                        {% if selectedPlace.bestTime %}
+                                            <div>
+                                                <dt>Beste Zeit</dt>
+                                                <dd>{{ selectedPlace.bestTime }}</dd>
+                                            </div>
+                                        {% endif %}
+                                    </dl>
+                                </section>
+                            </div>
+                        </div>
+                    </div>
+
+                    <section id="place-feedback" class="place-feedback-section">
+                        <section class="place-feedback-panel" aria-labelledby="place-feedback-title">
+                            <div class="place-feedback-copy">
+                                <span class="section-kicker">Feedbacks</span>
+                                <h2 id="place-feedback-title">Feedback zu {{ selectedPlace.name }}</h2>
+                                <div class="place-feedback-list">
+                                    {% for item in selectedPlace.feedbacks|default([]) %}
+                                        <article class="place-feedback-card">
+                                            <div class="feedback-quote-icon">“</div>
+                                            <p>{{ item.quote }}</p>
+                                            <div class="feedback-meta">
+                                                <strong>{{ item.name }}</strong>
+                                                <span class="feedback-date">Entdecker</span>
+                                            </div>
+                                        </article>
+                                    {% else %}
+                                        <div class="empty-state">
+                                            <strong>Noch kein Feedback.</strong>
+                                            <p>Feedbacks für diesen Ort folgen bald.</p>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <form class="place-feedback-form" action="#place-feedback" method="post" autocomplete="off">
+                                <label>
+                                    <span>Dein Kommentar</span>
+                                    <textarea name="quote" rows="5" placeholder="Was denkst du über diesen Ort?" maxlength="280" required></textarea>
+                                </label>
+                                <button type="submit">Feedback senden</button>
+                            </form>
+                        </section>
+                    </section>
+                {% endif %}
             </div>
         </main>
 
         {% include 'partials/_footer.html.twig' %}
     </div>
-
-    <script>window.COOL_PLACES_DATA = {{ coolPlacesJson|raw }};</script>
 {% endblock %}
