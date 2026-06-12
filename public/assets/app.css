@@ -2718,6 +2718,7 @@ body.is-city-search-open .home-page .home-hero {
 .home-page .hero-content {
     width: min(980px, 100%);
     text-align: center;
+    transform: translateY(-15px);
 }
 
 .home-page .hero-kicker {
